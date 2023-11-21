@@ -24,13 +24,39 @@ mdc: true
 Jonathan Tang
 
 ---
+transition: fade
+---
 
 # 動態生成 Header list ?
 
 像醬的設計
 
-<div class="flex justify-center">
+
+<div  class="flex justify-center">
   <img src="src/images/Group_20104.png" class="w-auto h-96">
+</div>
+
+<style>
+h1 {
+  background-color: #2B90B6;
+  background-image: linear-gradient(45deg, #4EC5D4 10%, #146b8c 20%);
+  background-size: 100%;
+  -webkit-background-clip: text;
+  -moz-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  -moz-text-fill-color: transparent;
+}
+</style>
+
+---
+
+# 動態生成 Header list ?
+
+像醬的設計
+
+
+<div  class="flex justify-center">
+  <img src="src/images/Group_20104_fill.png" class="w-auto h-96">
 </div>
 
 <style>
@@ -73,26 +99,61 @@ const items = [...]
 
 ---
 
-# 想按照條件決定 header 的話...
+# 直接操作 headerList 陣列
 
-```vue
+```vue {all|2-6|9-11|13-21|all} {lines:true, startLine:1}
+<script setup>
+const headerList = reactive([
+  defaultColumnsA,
+  defaultColumnsB,
+  defaultColumnsC
+  ...
+])
+
+const conditionA = ref(true)
+const conditionB = ref(false)
+const conditionC = ref(true)
+
+watch(conditionA, () => {
+  if (conditionA) {
+    headerList.push(columnA)
+  } else {
+    // remove columnA from headerList
+  }
+})
+
+// other watch
+
+</script>
+```
+---
+
+# 用 computed 生成動態 header
+
+```vue {all} {lines:true, startLine:1}
 <script setup>
 const headerList = computed(() => {
   const header = []
 
-  if (條件 A) {
-    header.push({...})
+  if (conditionA) {
+    header.push(columnA)
   }
-  if (條件 B) {
-    header.push({...})
+
+  if (conditionB) {
+    header.push(columnB)
   }
-  ...
+  
+  header.push(defaultColumns)
+
+  if (conditionC) {
+    header.push(columnC)
+  }
 
   return header
 })
 </script>
 ```
-
+<br>
 ---
 
 # Table of contents
