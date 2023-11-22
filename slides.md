@@ -27,7 +27,7 @@ Jonathan Tang
 transition: fade
 ---
 
-# 動態生成 Header list ?
+# 按條件變動的 Header list ?
 
 像醬的設計
 
@@ -36,21 +36,9 @@ transition: fade
   <img src="src/images/Group_20104.png" class="w-auto h-96">
 </div>
 
-<style>
-h1 {
-  background-color: #2B90B6;
-  background-image: linear-gradient(45deg, #4EC5D4 10%, #146b8c 20%);
-  background-size: 100%;
-  -webkit-background-clip: text;
-  -moz-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  -moz-text-fill-color: transparent;
-}
-</style>
-
 ---
 
-# 動態生成 Header list ?
+# 按條件變動的 Header list ?
 
 像醬的設計
 
@@ -58,18 +46,6 @@ h1 {
 <div  class="flex justify-center">
   <img src="src/images/Group_20104_fill.png" class="w-auto h-96">
 </div>
-
-<style>
-h1 {
-  background-color: #2B90B6;
-  background-image: linear-gradient(45deg, #4EC5D4 10%, #146b8c 20%);
-  background-size: 100%;
-  -webkit-background-clip: text;
-  -moz-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  -moz-text-fill-color: transparent;
-}
-</style>
 
 ---
 
@@ -98,8 +74,12 @@ const items = [...]
 ```
 
 ---
+layout: two-cols-header
+---
 
-# 直接操作 headerList 陣列
+# 直接操作 headerList
+
+::left::
 
 ```vue {all|2-6|9-11|13-21|all} {lines:true, startLine:1}
 <script setup>
@@ -126,14 +106,35 @@ watch(conditionA, () => {
 
 </script>
 ```
+
+::right::
+<div v-after style="padding: 20px">
+
+  ## Pros
+  - 直觀解法
+  - 由事件驅動(?)
+
+  ## Cons
+  - 條件變化下會需要不斷 splice, push, pop 陣列
+  - 不好追蹤變化 
+
+</div>
+
+---
+layout: two-cols-header
 ---
 
-# 用 computed 生成動態 header
+# 用 computed 生成 headerList
 
-```vue {all} {lines:true, startLine:1}
+::left::
+
+```vue {all|3-7|8-10|12-14|16-18|20|22|all} {lines:true, startLine:1}
 <script setup>
 const headerList = computed(() => {
-  const header = []
+  const header = [
+    defaultColumnA,
+    defaultColumnB
+  ]
 
   if (conditionA) {
     header.push(columnA)
@@ -142,18 +143,68 @@ const headerList = computed(() => {
   if (conditionB) {
     header.push(columnB)
   }
-  
-  header.push(defaultColumns)
 
-  if (conditionC) {
+  if (!conditionB) {
     header.push(columnC)
   }
+
+  header.push(defaultColumnC)
 
   return header
 })
 </script>
 ```
-<br>
+
+::right::
+<div v-after style="padding: 20px">
+
+  ## Pros
+  - 由條件驅動
+  - header 順序相對明顯
+  - 每次都重新生成 header array，不用 remove 上次多餘的 column
+
+  ## Cons
+  - computed 變化時都會重新操作 header array
+  - 部分預設 column 會散落在 if block 之間
+
+</div>
+
+---
+layout: two-cols-header
+---
+
+# spread + conditional operator in computed
+
+::left::
+
+```vue {all|3-6|8-10|12-14|16|18-20|all} {lines:true, startLine:1}
+<script setup>
+const headerList = computed(() => {
+  return [
+    defaultColumnA,
+    defaultColumnB,
+    ...conditionA ? [columnA] : [],
+    ...conditionB ? [columnB] : [columnC],
+    defaultColumnC,
+  ]
+})
+</script>
+```
+
+::right::
+<div v-after style="padding: 20px">
+
+  ## Pros
+  - 由條件驅動
+  - header 順序相對明顯
+  - 每次都重新生成 header array，不用 remove 上次多餘的 column
+
+  ## Cons
+  - computed 變化時都會重新操作 header array
+  - 部分預設 column 會散落在 if block 之間
+
+</div>
+
 ---
 
 # Table of contents
