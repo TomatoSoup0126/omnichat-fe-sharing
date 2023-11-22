@@ -14,6 +14,8 @@ mdc: true
 
 <br>
 <br>
+<br>
+<br>
 
 Jonathan
 
@@ -71,7 +73,7 @@ const items = [...]
 
 # 舉個例子
 
-<div style="height: 55vh; overflow-y: scroll;">
+<div style="height: 50vh; overflow-y: scroll;">
 
 ### 情境一
 - conditionA ✅
@@ -86,6 +88,7 @@ const headerList = [
   defaultColumnC
 ]
 ```
+<br>
 
 ### 情境二
 - conditionA ✅
@@ -100,6 +103,7 @@ const headerList = [
   defaultColumnC
 ]
 ```
+<br>
 
 ### 情境三
 - conditionA ❌
@@ -113,6 +117,7 @@ const headerList = [
   defaultColumnC
 ]
 ```
+<br>
 
 ### 情境四
 - conditionA ❌
@@ -171,7 +176,7 @@ watch(conditionB, () => {
   - 直觀(?)
 
   ## Cons
-  - 條件變化下會需要不斷 splice, push, pop 陣列
+  - 條件變化下會需要不斷 splice, push, unshift 陣列
   - 需要注意陣列 index
   - 不好追蹤結果
 
@@ -216,7 +221,7 @@ const headerList = computed(() => {
   ## Pros
   - 由條件驅動
   - header 順序相對明顯
-  - 每次都重新生成 header array，不用 remove 上次多餘的 column
+  - 每次都重新生成 header array，不用移除多餘的 column
 
   ## Cons
   - computed 運算時會重複對 array 進行空間操作
