@@ -153,7 +153,7 @@ watch(conditionA, () => {
   }
 })
 watch(conditionB, () => {
-  if (conditionA) {
+  if (conditionB) {
     headerList.splice(array.length - 1, 0 , columnB)
     // remove columnC from headerList
   } else {
