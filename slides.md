@@ -27,7 +27,7 @@ transition: fade
 
 
 <div  class="flex justify-center">
-  <img src="src/images/Group_20104.png" class="w-auto h-96">
+  <img src="/Group_20104.png" class="w-auto h-96">
 </div>
 
 ---
@@ -38,7 +38,7 @@ transition: fade
 
 
 <div  class="flex justify-center">
-  <img src="src/images/Group_20104_fill.png" class="w-auto h-96">
+  <img src="/Group_20104_fill.png" class="w-auto h-96">
 </div>
 
 ---
