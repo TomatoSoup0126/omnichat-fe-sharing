@@ -32,6 +32,8 @@ transition: fade
   <img src="/Group_20104.png" class="w-auto h-96">
 </div>
 
+<!-- 約莫就是這樣的設計，在不同條件下，表格會展示不同的 column -->
+
 ---
 
 # 按條件變動的 Header list ?
@@ -42,6 +44,9 @@ transition: fade
 <div  class="flex justify-center">
   <img src="/Group_20104_fill.png" class="w-auto h-96">
 </div>
+
+<!-- 可以看到右側的藍綠黃三者在不同條件下都會存在，但是有寬度設定的差異
+而紅色、青色、桃紅則是在不同條件下有出現隱藏的情況 -->
 
 ---
 
@@ -68,6 +73,9 @@ const items = [...]
 />
 </template>
 ```
+
+<!-- 然後是大家都熟悉的 header 結構，這是從 vuetify 上抄下來的，會有一個陣列，裡面有幾個物件就是等於有幾個 column，並且裡面都會有相對應的 column name 和對應的 row value
+最後直接 bind 到 v-data-table 的 headers 上 -->
 
 ---
 
