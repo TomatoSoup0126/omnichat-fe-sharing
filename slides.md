@@ -15,7 +15,7 @@ mdc: true
 <br>
 <br>
 
-Jonathan Tang
+Jonathan
 
 ---
 transition: fade
