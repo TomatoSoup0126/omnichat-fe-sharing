@@ -12,11 +12,6 @@ mdc: true
 
 # Sharing 2023.11.23
 
-<br>
-<br>
-<br>
-<br>
-
 Jonathan
 
 ---
