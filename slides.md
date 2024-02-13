@@ -10,132 +10,94 @@ title: FE Sharing 2023.11.23
 mdc: true
 ---
 
-# Sharing 2023.11.23
+# Sharing 2024.02.15
 
 Jonathan
 
 ---
-transition: fade
----
 
-# 按條件變動的 Header list ?
-
-像醬的設計
-
+# 購物車再行銷的 Notification
 
 <div  class="flex justify-center">
-  <img src="/Group_20104.png" class="w-auto h-96">
+  <img src="/20240215/notification_with_footer.png" class="w-auto">
 </div>
-
-<!-- 約莫就是這樣的設計，在不同條件下，表格會展示不同的 column -->
 
 ---
 
-# 按條件變動的 Header list ?
+# useNotification.js
 
-像醬的設計
-
-
-<div  class="flex justify-center">
-  <img src="/Group_20104_fill.png" class="w-auto h-96">
-</div>
-
-<!-- 可以看到右側的藍綠黃三者在不同條件下都會存在，但是有寬度設定的差異
-而紅色、青色、桃紅則是在不同條件下有出現隱藏的情況 -->
+```js {all|2|3|4-6|8-18|20-23} {lines:true, startLine:1}
+// ...
+const defineNotification = (notificationRef) => {
+  const notification = ref(notificationRef);
+  function openNotification(obj) {
+    notification.value.openNotification(obj);
+  }
+  // ...
+  useNotification = function () {
+    if (scope == null) {
+      scope = effectScope();
+      state = scope.run(() => ({
+        openNotification,
+        closeNotification
+      }));
+    }
+    onScopeDispose(closeNotification);
+    return state;
+  };
+};
+export {
+  defineNotification,
+  useNotification
+};
+```
 
 ---
 
-# 大家熟悉的 headerList 結構
+# AppLayout.vue
 
-```vue {all|2-9|16|all}
+```vue {all|3,7,10|8|12-14} {lines:true, startLine:1}
+<template>
+  <!-- ... -->
+  <Notification ref="notificationRef" />
+</template>
+
 <script setup>
-const headerList = [
-  { text: 'Dessert (100g serving)', value: 'name',},
-  { text: 'Calories', value: 'calories' },
-  { text: 'Fat (g)', value: 'fat' },
-  { text: 'Carbs (g)', value: 'carbs' },
-  { text: 'Protein (g)', value: 'protein' },
-  { text: 'Iron (%)', value: 'iron' }
-]
+import Notification from '@/components/Notification.vue';
+import { defineNotification } from '@/components/composables/useNotification';
 
-const items = [...]
+const notificationRef = ref(null);
+
+onMounted(() => {
+  defineNotification(notificationRef);
+});
+</script>
+```
+
+---
+
+# Vue SFC
+
+```vue {all} {lines:true, startLine:1}
+<script setup>
+import { useNotification } from '@/components/composables/useNotification';
+
+const { openNotification } = useNotification();
+
+const showNotification = () => {
+  openNotification({
+    title: '我是標題'
+    content: '我是內容'
+  });
+};
 </script>
 
 <template>
-<v-data-table
-  :headers="headerList"
-  :items="items"
-/>
+  <Button @click="showNotification">
+    跳個通知
+  </Button>
 </template>
 ```
-
-<!-- 然後是大家都熟悉的 header 結構，這是從 vuetify 上抄下來的，會有一個陣列，裡面有幾個物件就是等於有幾個 column，並且裡面都會有相對應的 column name 和對應的 row value
-最後直接 bind 到 v-data-table 的 headers 上 -->
-
----
-
-# 舉個例子
-
-<div style="height: 50vh; overflow-y: scroll;">
-
-### 情境一
-- conditionA ✅
-- conditionB ✅
-
-```js
-const headerList = [
-  defaultColumnA,
-  defaultColumnB,
-  columnA
-  columnB,
-  defaultColumnC
-]
-```
-<br>
-
-### 情境二
-- conditionA ✅
-- conditionB ❌
-
-```js
-const headerList = [
-  defaultColumnA,
-  defaultColumnB,
-  columnA
-  columnC,
-  defaultColumnC
-]
-```
-<br>
-
-### 情境三
-- conditionA ❌
-- conditionB ✅
-
-```js
-const headerList = [
-  defaultColumnA,
-  defaultColumnB,
-  columnB,
-  defaultColumnC
-]
-```
-<br>
-
-### 情境四
-- conditionA ❌
-- conditionB ❌
-
-```js
-const headerList = [
-  defaultColumnA,
-  defaultColumnB,
-  columnC,
-  defaultColumnC
-]
-```
-
-</div>
 
 ---
 layout: two-cols-header
