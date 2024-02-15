@@ -8,6 +8,7 @@ drawings:
 transition: slide-left
 title: FE Sharing 2024.02.15
 mdc: true
+monaco: true
 ---
 
 # Sharing 2024.02.15
