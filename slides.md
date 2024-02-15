@@ -6,7 +6,7 @@ lineNumbers: false
 drawings:
   persist: false
 transition: slide-left
-title: FE Sharing 2023.11.23
+title: FE Sharing 2024.02.15
 mdc: true
 ---
 
@@ -15,35 +15,31 @@ mdc: true
 Jonathan
 
 ---
+layout: center
+---
 
-# 購物車再行銷的 Notification
-
-<div  class="flex justify-center">
-  <img src="/20240215/notification_with_footer.png" class="w-auto">
-</div>
+# 購物車再行銷的客製化 Notification
 
 ---
 
 # useNotification.js
 
-```js {all|2|3|4-6|8-18|20-23} {lines:true, startLine:1}
+```js {all|2|3|4-10|12-15|18-21} {lines:true, startLine:1}
 // ...
 const defineNotification = (notificationRef) => {
   const notification = ref(notificationRef);
-  function openNotification(obj) {
-    notification.value.openNotification(obj);
-  }
-  // ...
   useNotification = function () {
-    if (scope == null) {
-      scope = effectScope();
-      state = scope.run(() => ({
-        openNotification,
-        closeNotification
-      }));
+    function openNotification(obj) {
+      notification.value.openNotification(obj);
+    }
+    function closeNotification() {
+      notification.value.closeNotification();
     }
     onScopeDispose(closeNotification);
-    return state;
+    return {
+      openNotification,
+      closeNotification
+    };
   };
 };
 export {
@@ -78,14 +74,15 @@ onMounted(() => {
 
 # Vue SFC
 
-```vue {all} {lines:true, startLine:1}
+```vue {all|2|4|6-11,15-17|all} {lines:true, startLine:1}
 <script setup>
 import { useNotification } from '@/components/composables/useNotification';
 
 const { openNotification } = useNotification();
 
 const showNotification = () => {
-  openNotification({
+  openNotification({,
+    status: 'success'
     title: '我是標題'
     content: '我是內容'
   });
@@ -98,191 +95,173 @@ const showNotification = () => {
   </Button>
 </template>
 ```
-
----
-layout: two-cols-header
 ---
 
-# 直接操作 headerList
+# 購物車再行銷的客製化 Notification
 
-::left::
-
-```vue {all|2-6|8-14|14-23|all} {lines:true, startLine:1}
-<script setup>
-const headerList = reactive([
-  defaultColumnsA,
-  defaultColumnsB,
-  defaultColumnsC,
-])
-
-watch(conditionA, () => {
-  if (conditionA) {
-    headerList.splice(2, 0, columnA)
-  } else {
-    // remove columnA from headerList
-  }
-})
-watch(conditionB, () => {
-  if (conditionB) {
-    headerList.splice(array.length - 1, 0 , columnB)
-    // remove columnC from headerList
-  } else {
-    headerList.splice(array.length - 1, 0 , columnC)
-    // remove columnB from headerList
-  }
-})
-</script>
-```
-
-::right::
-<div v-after style="padding: 20px">
-
-  ## Pros
-  - 直觀(?)
-
-  ## Cons
-  - 條件變化下會需要不斷 splice, push, unshift 陣列
-  - 需要注意陣列 index
-  - 不好追蹤結果
-
+<div  class="flex justify-center">
+  <img src="/20240215/notification_with_footer.png" class="w-auto">
 </div>
 
 ---
 layout: two-cols-header
 ---
 
-# 用 computed 生成 headerList
+# Notification.vue
 
 ::left::
 
-```vue {all|2|3-7|8-10|12-16|18|20|all} {lines:true, startLine:1}
-<script setup>
-const headerList = computed(() => {
-  const header = [
-    defaultColumnA,
-    defaultColumnB
-  ]
-
-  if (conditionA) {
-    header.push(columnA)
-  }
-
-  if (conditionB) {
-    header.push(columnB)
-  } else {
-    header.push(columnC)
-  }
-
-  header.push(defaultColumnC)
-
-  return header
-})
-</script>
+```vue {all|5,10,14|20} {lines:true, startLine:1}
+<template>
+  <v-snackbar>
+    <div class="d-flex align-start text--subtitle-2">
+      <v-icon>
+        {{ notificationTitleIcon }}
+      </v-icon>
+      <slot name="custom">
+        <div class="ml-4">
+          <p class="mb-0 text--subtitle-3 neutral-040--text">
+            {{ notificationTitle }}
+          </p>
+          <p
+            class="notification-content"
+            v-html="notificationContent"
+          />
+        </div>
+      </slot>
+      <!-- ... -->
+    </div>
+    <slot name="footer" />
+  </v-snackbar>
+</template>
 ```
 
 ::right::
-<div v-after style="padding: 20px">
 
-  ## Pros
-  - 由條件驅動
-  - header 順序相對明顯
-  - 每次都重新生成 header array，不用移除多餘的 column
+```vue {0|all} {lines:true, startLine:1, at:0}
+<script>
+export default {
+  methods: {
+    openNotification({
+      title = '', content = '', status = 'error'
+    } = {}) {
+      this.resetNotification();
 
-  ## Cons
-  - computed 運算時會重複對 array 進行空間操作
-  - 部分預設 column 會在中途才加入 header array，不好看出哪些 column 是預設的
+      this.notificationStatus = status;
+      this.notificationTitle = title;
+      this.notificationContent = content;
 
-</div>
-
----
-layout: two-cols-header
----
-
-# computed 中使用展開 + 三元運算子
-
-::left::
-
-```vue {all|4,5,8|6|7|all} {lines:true, startLine:1}
-<script setup>
-const headerList = computed(() => {
-  return [
-    defaultColumnA,
-    defaultColumnB,
-    ...conditionA ? [columnA] : [],
-    ...conditionB ? [columnB] : [columnC],
-    defaultColumnC,
-  ]
-})
-</script>
-```
-
-::right::
-<div v-after style="padding: 0 20px;">
-
-  ## Pros
-  - 上一版 computed 的好處皆有
-  - 預設 column 的排列位置清楚
-  - 程式碼行數減少
-
-  ## Cons
-  - 條件更複雜情況下，連續使用三元運算會造成閱讀困難
-
-</div>
-
-<style>
-.col-header {
-  height: fit-content;
+      this.isShowNotification = true;
+    },
+  }
 }
-.two-cols-header {
-  grid-template-rows: auto;
-}
-</style>
+</script>
+
+```
 
 ---
 
-# 這次的需求最後可以寫成...
+# useNotification.js
 
-```vue {all|3-7|8-16|15,20,26,32|34-38|all} {lines:true, startLine:1, maxHeight: '55vh'}
+```js {monaco-diff}
+const defineNotification = (notificationRef) => {
+  const notification = ref(notificationRef);
+  useNotification = function () {
+    function openNotification(obj) {
+      notification.value.openNotification(obj);
+    }
+    function closeNotification() {
+      notification.value.closeNotification();
+    }
+    onScopeDispose(closeNotification);
+    return {
+      openNotification,
+      closeNotification
+    };
+  };
+};
+~~~
+const defineNotification = (notification) => {
+  const notificationRef = ref(notification);
+  useNotification = function () {
+    function openNotification(obj) {
+      notification.value.openNotification(obj);
+    }
+    function closeNotification() {
+      notification.value.closeNotification();
+    }
+    onScopeDispose(closeNotification);
+    return {
+      openNotification,
+      closeNotification,
+      notificationRef
+    };
+  };
+};
+```
+
+---
+
+# Render function to footer slot
+
+```vue {all|2,7-17|3,5|19|7-17,20|21-24} {lines:true, startLine:1, maxHeight:'400px'}
 <script setup>
-const headerList = computed(() => [
-  ...showCardIndex.value ? [{
-    text: t('BROADCAST.CARD_INDEX'),
-    value: 'cardIndex',
-    width: '14%'
-  }] : [],
-  ...showActionIndex.value ? [{
-    text: t('RICHMENU.DEFINE_ACTION'),
-    value: 'actionIndex',
-    width: '14%'
-  }] : [{
-    text: t('CHANNEL_PRESET_MESSAGES.BUTTON_NAME'),
-    value: 'buttonName',
-    width: showCardIndex.value ? '24%' : '28%'
-  }],
+import { h } from 'vue';
+import { useNotification } from '@/components/composables/useNotification';
+
+const { openNotification, notificationRef } = useNotification();
+
+const linkToSetting = h(
+  'a',
   {
-    text: t('CHANNEL_PRESET_MESSAGES.BUTTON_TYPE'),
-    value: 'buttonType',
-    width: showCardIndex.value ? '16%' : showActionIndex.value ? '22%' : '18%'
+    attrs: {
+      href: `${import.meta.env.VITE_APP_CHAT_ADMIN_URL}/product-feed.html`,
+      class: 'primary-001--text text--body-2 w-full text-right mt-4',
+      style: 'display: block;'
+    }
   },
-  {
-    text: t('BROADCAST.CLICK_RATE'),
-    value: 'clickRate',
-    align: 'end',
-    width: showCardIndex.value ? '20%' : '26%'
-  },
-  {
-    text: t('RICHMENU.CLICKS'),
-    value: 'clicks',
-    align: 'end',
-    width: showCardIndex.value ? '26%' : showActionIndex.value ? '34%' : '28%'
-  }
-].map((item) => ({
-  ...item,
-  sortable: false,
-  class: 'text--body-2 neutral-042--text'
-})));
+  '我是被塞進來的 footer link'
+);
+
+const showNotification = () => {
+  notificationRef.value.$slots.footer = linkToSetting;
+  openNotification({
+    title: '我是 title',
+    content: '我是 content'
+  });
+};
 </script>
 ```
+
+---
+
+# Reset footer slot
+
+```vue {monaco-diff}
+<script>
+const showNotification = () => {
+  notificationRef.value.$slots.footer = linkToSetting;
+  openNotification({
+    title: '我是 title',
+    content: '我是 content'
+  });
+};
+</script>
+~~~
+<script>
+const showNotification = () => {
+  notificationRef.value.$slots.footer = linkToSetting;
+  openNotification({
+    title: '我是 title',
+    content: '我是 content'
+  });
+  nextTick(() => {
+    notificationRef.value.$slots.footer = null;
+  });
+};
+</script>
+```
+
 ---
 layout: center
 ---
