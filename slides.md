@@ -74,7 +74,7 @@ onMounted(() => {
 
 # Vue SFC
 
-```vue {all|2|4|6-11,15-17|all} {lines:true, startLine:1}
+```vue {all|2|4|6-11,15-18} {lines:true, startLine:1}
 <script setup>
 import { useNotification } from '@/components/composables/useNotification';
 
