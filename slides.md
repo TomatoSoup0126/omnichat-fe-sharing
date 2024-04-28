@@ -6,12 +6,12 @@ lineNumbers: false
 drawings:
   persist: false
 transition: slide-left
-title: FE Sharing 2024.02.15
+title: FE Sharing 2024.05.02
 mdc: true
 monaco: true
 ---
 
-# Sharing 2024.02.15
+# Sharing 2024.05.12
 
 Jonathan
 
@@ -19,34 +19,231 @@ Jonathan
 layout: center
 ---
 
-# 購物車再行銷的客製化 Notification
+# Custom component in Asgard
+
+- File previewer
+- Select input
 
 ---
 
-# useNotification.js
+# File Previewer
 
-```js {all|2|3|4-10|12-15|18-21} {lines:true, startLine:1}
+<div  class="flex items-center h-3/4">
+  <div class="w-1/2">
+    <img src="/20240502/截圖 2024-04-28 上午10.46.13.png" >
+  </div>
+  <div class="w-1/2">
+    <img src="/20240502/截圖 2024-04-28 上午10.47.18.png" >
+  </div>
+</div>
+
+---
+
+# Use
+
+```vue
+<script setup>
+import FilePreviewer from '@/components/filePreviewer/FilePreviewer.vue';
+
+const filePath = ref('')
+const height = ref(200)
+const showDownloadButton = ref(false)
+</script>
+
+<template>
+  <FilePreviewer
+    :file-path="filePath"
+    :height="height"
+    :show-download-button="showDownloadButton"
+  />
+</template>
+```
+---
+layout: iframe
+
+# the web page source
+url: http://localhost:8080/design-guideline-sample
+---
+
+---
+
+# Component structure
+
+```markdown {all|1|2,5}
+FilePreviewer
+ ┣ ImagePreviewer.vue
+ ┃ ┣ ViewerContainer
+ ┃ ┗ LightboxDialog
+ ┗ PdfPreviewer.vue
+   ┗ ViewerContainer
+```
+<v-clicks>
+```vue
+<script setup>
 // ...
-const defineNotification = (notificationRef) => {
-  const notification = ref(notificationRef);
-  useNotification = function () {
-    function openNotification(obj) {
-      notification.value.openNotification(obj);
+const isPdfFile = computed(() => props.filePath.endsWith('.pdf'));
+</script>
+<template>
+  <div>
+    <PdfPreviewer
+      v-if="isPdfFile"
+      v-bind="$props"
+    />
+    <ImagePreviewer
+      v-else
+      v-on="$listeners"
+      v-bind="$props"
+    />
+  </div>
+</template>
+
+```
+</v-clicks>
+
+---
+
+# Component structure
+
+```markdown {2}
+FilePreviewer
+ ┗ ImagePreviewer.vue
+   ┣ ViewerContainer
+   ┗ LightboxDialog
+```
+
+```vue {all}{maxHeight:'300px'}
+<script setup>
+const showLightbox = ref(false);
+
+const actionList = computed(() => ([
+  {
+    type: 'expand',
+    icon: 'expand',
+    action: () => {
+      showLightbox.value = true;
     }
-    function closeNotification() {
-      notification.value.closeNotification();
+  },
+  {
+    type: 'download',
+    icon: 'export_download',
+    action: () => {
+      downloadImageFromUrl(props.filePath);
     }
-    onScopeDispose(closeNotification);
-    return {
-      openNotification,
-      closeNotification
-    };
-  };
-};
-export {
-  defineNotification,
-  useNotification
-};
+  }
+]));
+</script>
+<template>
+  <ViewerContainer :action-list="actionList">
+    <template #previewPanel>
+      <img :src="props.filePath">
+    </template>
+  </ViewerContainer>
+  <LightboxDialog
+    :file-path="props.filePath"
+    :display="showLightbox"
+    @close="showLightbox = false"
+  />
+</template>
+
+```
+
+---
+
+# Component structure
+
+```markdown {3}
+FilePreviewer
+ ┗ ImagePreviewer.vue
+   ┣ ViewerContainer
+   ┗ LightboxDialog
+```
+
+```vue {all}{maxHeight:'300px'}
+<template>
+  <v-sheet
+    class="viewer-container"
+    :style="{'--height': `${props.height}px`}"
+    width="100%"
+    height="100%"
+  >
+    <div
+      class="action-panel"
+      v-if="hasActionList"
+    >
+      <SvgIcon
+        v-for="action in props.actionList"
+        class="pointer-cursor"
+        :key="action.type"
+        :icon-class="action.icon"
+        size="32"
+        color="#FFFFFF"
+        @click="action.action"
+      />
+    </div>
+    <div class="preview-panel">
+      <slot name="previewPanel" />
+    </div>
+  </v-sheet>
+</template>
+
+```
+
+---
+
+# Component structure
+
+```markdown {4}
+FilePreviewer
+ ┗ ImagePreviewer.vue
+   ┣ ViewerContainer
+   ┗ LightboxDialog
+```
+
+```vue {all}{maxHeight:'300px'}
+<template>
+  <v-dialog
+    class="lightbox-dialog"
+    :value="props.display"
+    fullscreen
+    hide-overlay
+    @keydown="close"
+  >
+    <div class="mask" />
+    <div class="action-container">
+      <div
+        class="action-btn"
+        @click="downloadImageFromUrl(props.filePath)"
+      >
+        <SvgIcon
+          v-if="props.showDownloadButton"
+          icon-class="export_download"
+          size="40"
+          color="#FFFFFF"
+        />
+      </div>
+      <div
+        class="action-btn"
+        @click="close"
+      >
+        <SvgIcon
+          class="pointer-cursor"
+          icon-class="cancel"
+          size="40"
+          color="#FFFFFF"
+        />
+      </div>
+    </div>
+    <div class="preview-img">
+      <img
+        :src="props.filePath"
+        alt="preview"
+        width="100%"
+        height="100%"
+      >
+    </div>
+  </v-dialog>
+</template>
+
 ```
 
 ---
