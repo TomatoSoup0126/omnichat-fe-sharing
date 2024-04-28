@@ -248,24 +248,78 @@ FilePreviewer
 
 ---
 
-# AppLayout.vue
+# Component structure
 
-```vue {all|3,7,10|8|12-14} {lines:true, startLine:1}
+```markdown {2}
+FilePreviewer
+ ┗ PdfPreviewer.vue
+   ┗ ViewerContainer
+```
+
+```vue {all}{maxHeight:'300px'}
+<script setup>
+import { pdfjs } from '@/utils/pdfjs.js';
+
+const getDocument = async () => {
+  try {
+    if (!props.filePath) {
+      return;
+    }
+    isLoading.value = true;
+    const file = await pdfjs.getDocument(props.filePath).promise;
+    pdfDocument.value = file;
+
+    const page = await file.getPage(1);
+    const viewport = page.getViewport({ scale: 1 });
+    const context = pdfContainer.value.getContext('2d');
+
+    pdfContainer.value.height = viewport.height;
+    pdfContainer.value.width = viewport.width;
+
+    page.render({
+      canvasContext: context,
+      viewport
+    });
+  } catch (error) {
+    console.error('pdf read error:', error);
+  } finally {
+    isLoading.value = false;
+  }
+};
+</script>
+
 <template>
-  <!-- ... -->
-  <Notification ref="notificationRef" />
+  <div>
+    <ViewerContainer :action-list="actionList">
+      <template #previewPanel>
+        <canvas ref="pdfContainer"/>
+      </template>
+    </ViewerContainer>
+  </div>
 </template>
 
-<script setup>
-import Notification from '@/components/Notification.vue';
-import { defineNotification } from '@/components/composables/useNotification';
+```
 
-const notificationRef = ref(null);
+---
+layout: iframe-right
 
-onMounted(() => {
-  defineNotification(notificationRef);
-});
-</script>
+# the web page source
+url: https://mozilla.github.io/pdf.js/
+
+---
+
+# utils/pdfjs.js
+
+```js
+import * as pdfjs from 'pdfjs-dist';
+
+pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+  'pdfjs-dist/build/pdf.worker.js',
+  import.meta.url
+);
+
+export { pdfjs };
+
 ```
 
 ---
