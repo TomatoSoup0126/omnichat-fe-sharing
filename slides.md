@@ -420,170 +420,111 @@ export { pdfjs };
 
 ---
 
-# 購物車再行銷的客製化 Notification
+# useRouteHash
 
-<div  class="flex justify-center">
-  <img src="/20240215/notification_with_footer.png" class="w-auto">
-</div>
+```js
 
----
-layout: two-cols-header
----
+import { computed } from 'vue';
 
-# Notification.vue
+export function useRouteHash() {
+  const route = useRoute();
 
-::left::
+  const hash = computed(() => route.hash);
+  const hashValue = computed(() => route.hash.replace('#', ''));
+  const updateUrlHash = (value) => {
+    window.history.pushState(
+      null,
+      null,
+      `${route.path}#${value}`
+    );
+  };
 
-```vue {all|5,10,14|20} {lines:true, startLine:1}
-<template>
-  <v-snackbar>
-    <div class="d-flex align-start text--subtitle-2">
-      <v-icon>
-        {{ notificationTitleIcon }}
-      </v-icon>
-      <slot name="custom">
-        <div class="ml-4">
-          <p class="mb-0 text--subtitle-3 neutral-040--text">
-            {{ notificationTitle }}
-          </p>
-          <p
-            class="notification-content"
-            v-html="notificationContent"
-          />
-        </div>
-      </slot>
-      <!-- ... -->
-    </div>
-    <slot name="footer" />
-  </v-snackbar>
-</template>
+  return {
+    hash,
+    hashValue,
+    updateUrlHash
+  };
+}
+
 ```
 
-::right::
+---
 
-```vue {0|all} {lines:true, startLine:1, at:0}
-<script>
-export default {
-  methods: {
-    openNotification({
-      title = '', content = '', status = 'error'
-    } = {}) {
-      this.resetNotification();
+# Use
 
-      this.notificationStatus = status;
-      this.notificationTitle = title;
-      this.notificationContent = content;
+```vue
+<script setup>
+import { useRouteHash } from '@/components/composables/useRouteHash';
 
-      this.isShowNotification = true;
-    },
+const { hash, updateUrlHash } = useRouteHash();
+
+const breadcrumbs = computed(() => [
+  {
+    text: 'WhatsApp Flows',
+    to: {
+      name: 'whatsAppFlows',
+      hash: hash.value
+    }
+    // ...
   }
+]);
+
+const handleWabaIdChange = (id) => {
+  updateUrlHash(id)
 }
 </script>
 
 ```
 
 ---
+layout: iframe
 
-# useNotification.js
-
-```js {monaco-diff}
-const defineNotification = (notificationRef) => {
-  const notification = ref(notificationRef);
-  useNotification = function () {
-    function openNotification(obj) {
-      notification.value.openNotification(obj);
-    }
-    function closeNotification() {
-      notification.value.closeNotification();
-    }
-    onScopeDispose(closeNotification);
-    return {
-      openNotification,
-      closeNotification
-    };
-  };
-};
-~~~
-const defineNotification = (notification) => {
-  const notificationRef = ref(notification);
-  useNotification = function () {
-    function openNotification(obj) {
-      notification.value.openNotification(obj);
-    }
-    function closeNotification() {
-      notification.value.closeNotification();
-    }
-    onScopeDispose(closeNotification);
-    return {
-      openNotification,
-      closeNotification,
-      notificationRef
-    };
-  };
-};
-```
+# useRouteHash in vueuse
+url: https://vueuse.org/router/useRouteHash
+---
 
 ---
 
-# Render function to footer slot
+# i18n sync CLI
 
-```vue {all|2,7-17|3,5|19|7-17,20|21-24} {lines:true, startLine:1, maxHeight:'400px'}
-<script setup>
-import { h } from 'vue';
-import { useNotification } from '@/components/composables/useNotification';
-
-const { openNotification, notificationRef } = useNotification();
-
-const linkToSetting = h(
-  'a',
-  {
-    attrs: {
-      href: `${import.meta.env.VITE_APP_CHAT_ADMIN_URL}/product-feed.html`,
-      class: 'primary-001--text text--body-2 w-full text-right mt-4',
-      style: 'display: block;'
-    }
-  },
-  '我是被塞進來的 footer link'
-);
-
-const showNotification = () => {
-  notificationRef.value.$slots.footer = linkToSetting;
-  openNotification({
-    title: '我是 title',
-    content: '我是 content'
-  });
-};
-</script>
+```bash
+yarn lang:sync-cli
 ```
-
----
-
-# Reset footer slot
-
-```vue {monaco-diff}
-<script>
-const showNotification = () => {
-  notificationRef.value.$slots.footer = linkToSetting;
-  openNotification({
-    title: '我是 title',
-    content: '我是 content'
-  });
-};
-</script>
-~~~
-<script>
-const showNotification = () => {
-  notificationRef.value.$slots.footer = linkToSetting;
-  openNotification({
-    title: '我是 title',
-    content: '我是 content'
-  });
-  nextTick(() => {
-    notificationRef.value.$slots.footer = null;
-  });
-};
-</script>
+<v-clicks>
+```bash
+✔ Pick a tab › 通訊渠道｜Channels
 ```
+</v-clicks>
+<v-clicks>
+```bash
+✔ Pick a feature › ＷhatsApp Flow
+```
+</v-clicks>
+<v-clicks>
+```bash
+✔ Input i18n key … flow
+```
+</v-clicks>
+<v-clicks>
+```bash
+✔ Ready to sync i18n? … no / yes
+```
+</v-clicks>
+
+<v-clicks>
+```json
+{
+  "FLOW": {
+    "KEY0": "測試用0",
+    "KEY1": "測試用1",
+    "KEY2": "測試用2",
+    "KEY3": "測試用3",
+    "KEY4": "測試用4",
+    "KEY5": "測試用5"
+  }
+}
+```
+</v-clicks>
 
 ---
 layout: center
