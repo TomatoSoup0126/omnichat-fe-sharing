@@ -19,10 +19,12 @@ Jonathan
 layout: center
 ---
 
-# Custom component in Asgard
+# Custom component / tool in Asgard
 
 - File previewer
 - Select input
+- useRouteHash
+- i18n sync CLI
 
 ---
 
@@ -324,29 +326,98 @@ export { pdfjs };
 
 ---
 
-# Vue SFC
+# Select input
 
-```vue {all|2|4|6-11,15-18} {lines:true, startLine:1}
+<div  class="flex items-center h-3/4 justify-center">
+  <div class="w-1/2">
+    <img src="/20240502/截圖 2024-05-01 下午3.10.05.png" >
+  </div>
+</div>
+---
+
+# Use
+
+```vue
 <script setup>
-import { useNotification } from '@/components/composables/useNotification';
+import SelectInput from '@/components/form/SelectInput.vue';
 
-const { openNotification } = useNotification();
-
-const showNotification = () => {
-  openNotification({,
-    status: 'success'
-    title: '我是標題'
-    content: '我是內容'
-  });
-};
+const optionList = [
+  {
+    text: '姓名',
+    value: 'name'
+  }
+]
+const searchParams = ref({
+  type: 'name'
+  input: ''
+});
 </script>
 
 <template>
-  <Button @click="showNotification">
-    跳個通知
-  </Button>
+  <SelectInput
+    v-model="params"
+    :option-list="optionList"
+    @change="changeHandler"
+  />
 </template>
 ```
+
+---
+
+# Component structure
+
+```markdown {all|1|2,5}
+SelectInput
+ ┣ Select
+ ┗ Input
+```
+
+```vue {all}{maxHeight:'300px'}
+
+<template>
+  <div
+    class="d-flex custom-select-input"
+  >
+    <Select
+      class="custom-select-input--select"
+      :value="props.value.type"
+      :items="props.optionList"
+      item-text="text"
+      item-value="value"
+      :hide-details="true"
+      @change="(value) => handleSelectChange(value)"
+    />
+    <Input
+      :value="props.value.input"
+      type="text"
+      class="custom-select-input--text"
+      clear-icon="mdi-close-circle"
+      clearable
+      :hide-details="true"
+      :placeholder="$t('TEAMMATE.PLEASE_SEARCH')"
+      @change="(value) => handleChange({ key:'input', value })"
+    />
+  </div>
+</template>
+
+<style lang="scss" scoped>
+.custom-select-input {
+  height: 32px;
+  border: 1px solid $neutral-cold-053;
+  border-radius: 4px;
+  box-sizing: border-box;
+
+  &:has(:focus) {
+    transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
+    border-color: $primary-001;
+    box-shadow: 0px 0px 0px 2px rgba(64, 143, 255, 0.25);
+  }
+}
+...
+</style>
+
+```
+
 ---
 
 # 購物車再行銷的客製化 Notification
