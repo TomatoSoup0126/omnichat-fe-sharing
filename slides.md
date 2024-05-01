@@ -21,11 +21,13 @@ layout: center
 
 # Custom component / tool in Asgard
 
-- Select input
-- File previewer
-- useRouteHash
-- i18n sync CLI
+- <Link to="select-input" title="Select input"/>
+- <Link to="file-previewer" title="File previewer"/>
+- <Link to="use-route-hash" title="useRouteHash"/>
+- <Link to="i18n-sync-cli" title="i18n sync CLI"/>
 
+---
+routeAlias: select-input
 ---
 
 # Select input
@@ -120,6 +122,8 @@ SelectInput
 
 ```
 
+---
+routeAlias: file-previewer
 ---
 
 # File Previewer
@@ -419,6 +423,8 @@ export { pdfjs };
 ```
 
 ---
+routeAlias: use-route-hash
+---
 
 # useRouteHash
 
@@ -483,6 +489,8 @@ layout: iframe
 url: https://vueuse.org/router/useRouteHash
 ---
 
+---
+routeAlias: i18n-sync-cli
 ---
 
 # i18n sync CLI
