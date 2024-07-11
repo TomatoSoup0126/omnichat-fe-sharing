@@ -22,7 +22,8 @@ layout: center
 # 今天的內容
 
 - <Link to="mythical-man-month" title="人月神話"/>
-- <Link to="file-previewer" title="Vue devtool next"/>
+- <Link to="vue-devtool-next" title="Vue devtool next"/>
+- <Link to="extract-command" title="Extract command"/>
 
 ---
 routeAlias: mythical-man-month
@@ -449,6 +450,7 @@ layout: center
 - 變化：讓系統與組織利於變化
 
 ---
+routeAlias: vue-devtool-next
 layout: iframe
 
 # the web page source
@@ -472,6 +474,39 @@ layout: center
 - Chrome extension
 - Vite plugin
 - Standalone app
+
+---
+layout: center
+---
+
+# 差別
+- 靜態檔案瀏覽
+- 時間軸
+- 模組關聯圖
+
+---
+routeAlias: extract-command
+layout: center
+---
+
+# Vue extension - extract command
+
+<div class="flex flex-col items-center justify-center h-full">
+  <div
+    style="background-image: url('/20240711/vue-official.png')"
+    class="w-full h-30 bg-contain bg-no-repeat"
+  />
+</div>
+
+---
+layout: center
+---
+
+# ⌘ + P > Refactor
+<div class="flex flex-col items-center justify-center h-full">
+  <img class="mb-2 w-9/10" src="/20240711/截圖 2024-07-11 中午12.09.02.png" />
+  <img class="w-9/10" src="/20240711/截圖 2024-07-11 中午12.05.58.png" />
+</div>
 
 ---
 layout: center
