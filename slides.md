@@ -1,5 +1,5 @@
 ---
-background: https://images.unsplash.com/photo-1514897575457-c4db467cf78e
+background: https://images.unsplash.com/photo-1445711005973-54fe2a103826
 class: text-center
 highlighter: shiki
 lineNumbers: false
@@ -11,7 +11,7 @@ mdc: true
 monaco: true
 ---
 
-# Sharing 2024.07.11
+# Sharing 2024.09.27
 
 Jonathan
 
@@ -19,27 +19,114 @@ Jonathan
 layout: center
 ---
 
-# 今天的內容
+# 機器人 2.0
 
-- <Link to="mythical-man-month" title="人月神話"/>
-- <Link to="vue-devtool-next" title="Vue devtool next"/>
-- <Link to="extract-command" title="Extract command"/>
-
----
-routeAlias: mythical-man-month
-layout: image-left
-
-# the image source
-image: /20240711/cover-mythical-man-month.webp
-backgroundSize: contain
+- <Link to="key-points-of-refactor" title="改版重點、原則"/>
+- <Link to="architecture" title="架構"/>
+- <Link to="derivative" title="衍生物"/>
 
 ---
+routeAlias: key-points-of-refactor
+layout: center
+---
 
-# 人月神話
-- 號稱軟體管理專案經典
-- 1975 年上市
-- 距今即將 50 年
-- 雖然年代久遠，但有些東西拿到現在還是通用
+# 改版重點、原則 & ~~偷渡新功能~~
+- 內部模組與按鈕的關聯性可視化
+- 所有模組內容皆通過驗證才能儲存
+- 儲存時只儲存異動模組
+- 按鈕可連結到外部機器人模組
+- 模組內部複製
+
+---
+
+## 機器人內部模組與按鈕的關聯性可視化
+
+<div class="w-full h-full flex justify-center items-center flex-col gap-4">
+  <img src="/20240927/截圖 2024-09-15 晚上9.01.13.png" class="w-full">
+</div>
+
+---
+
+
+## 所有模組內容皆通過驗證才能儲存
+
+<div class="w-full h-full flex justify-center items-center flex-col gap-4">
+  <img src="/20240927/截圖 2024-09-23 下午3.58.18.png" class="w-full">
+</div>
+
+---
+
+## 儲存時只儲存異動模組
+
+<div class="w-full h-full flex justify-center items-center flex-col gap-4">
+  <img src="/20240927/截圖 2024-09-23 下午4.02.13.png" class="w-full">
+</div>
+
+---
+
+## 按鈕可連結到外部機器人模組
+
+<div class="w-full h-full flex justify-center items-center flex-col gap-4">
+  <img src="/20240927/截圖 2024-09-23 下午4.06.10.png" class="w-full">
+</div>
+
+---
+
+## 模組內部複製
+
+<div class="w-full h-full flex justify-center items-center flex-col gap-4">
+  <img src="/20240927/截圖 2024-09-23 下午4.22.28.png" class="w-full">
+</div>
+
+---
+routeAlias: architecture
+layout: two-cols-header
+---
+
+# 架構
+
+::left::
+
+```vue
+BotBuilder.vue
+<template>
+  <div>
+    <BuilderNavbar @save="handleSave" />
+    <BotFlow
+      v-model:selectedNodeId="selectedNodeId"
+      v-model:botPositionsData="botPositionsData"
+      :bot-message-blocks-data="botMessageBlocksData"
+    /> 
+    <SettingPanel
+      v-model:editingMessageBlock="botMessageBlocksData[selectedNodeIndex]"
+      @zoom-in="handleZoomIn"
+      @zoom-out="handleZoomOut"
+      @zoom-to-fit="handleZoomToFit"
+      @zoom-to="handleZoomTo"
+      @edit-to="handleEditTo"
+      @auto-layout-graph="autoLayoutGraph"
+    />  
+    </div>
+  </div>
+</template>
+
+```
+
+::right::
+
+- BuilderNavbar
+  - 全模組資料驗證
+  - 儲存
+  - 路由跳轉
+
+- BotFlow
+  - 接收模組資料進行渲染
+  - 編輯當下選擇的模組ID
+  - 編輯所有模組的座標
+
+- SettingPanel
+  - 編輯當下選擇的模組
+  - 控制 BotFlow 的縮放行為
 
 ---
 layout: image-left
