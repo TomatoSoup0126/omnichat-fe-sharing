@@ -6,7 +6,7 @@ lineNumbers: false
 drawings:
   persist: false
 transition: slide-left
-title: FE Sharing 2024.07.11
+title: FE Sharing 2024.09.27
 mdc: true
 monaco: true
 ---
@@ -23,6 +23,7 @@ layout: center
 
 - <Link to="key-points-of-refactor" title="改版重點、原則"/>
 - <Link to="architecture" title="架構"/>
+- <Link to="difficulties" title="難處"/>
 - <Link to="derivative" title="衍生物"/>
 
 ---
@@ -127,6 +128,277 @@ BotBuilder.vue
 - SettingPanel
   - 編輯當下選擇的模組
   - 控制 BotFlow 的縮放行為
+
+---
+routeAlias: difficulties
+layout: center
+---
+
+# 難處
+- 計算模組間的連線 (edges)
+- 模組內的按鈕與其他模組的連接點 (handle)
+- 找出異動的模組
+- 模組選擇器
+
+---
+
+## 計算模組間的連線 (edges)
+
+要找出各模組內的每個互動按鈕(buttons, replies, carousel, nextblockUUID...)
+並建立成 edge 的資料格式
+
+edge example
+
+```ts
+{
+  // 互動按鈕的所屬模組 id
+  "source":"f1c716e1-dc38-44e1-8477-f29f266cb9e2",
+
+  // 互動按鈕的 id
+  "sourceHandle":"126dc19d-c49f-407a-962c-bf50d3a896dc",
+
+  // 互動按鈕所連接的模組 id
+  "target":"9fe190ed-ff72-411b-a71e-7215777cb7c5",
+
+  // 部分 edge 的 label config
+  "label":"滿足條件時觸發",
+  "labelBgStyle": {
+    "fill":"#2CD9C5"
+  }
+}
+
+```
+---
+
+## 計算模組間的連線 (edges)
+
+要找出各模組內的每個互動按鈕(buttons, replies, carousel, nextblockUUID...)
+並建立成 edge 的資料格式
+
+原始資料長這樣 
+
+```ts {*}{maxHeight:'300px'}
+{
+  // 互動按鈕的所屬模組 id
+  "id": "b9e37c8d-31ac-49a8-a7ef-932e610c5c9b",
+  "chatbotId": "e5733dcb-be48-4582-aa66-68c0248af10b",
+  "title": "Jonathan - flow",
+  "name": "我有輪播訊息",
+  "status": 1,
+  "messages": [
+    {
+      "isGrabbing": false,
+      "grabbingIndex": null,
+      "id": "f8c5e9f9-e445-4efd-9312-7e1bee660462",
+      "message": "Bot Message (機器人信息) Carousel",
+      "extension": [
+        {
+          "imageUrl": "https%3A%2F%2Fs3-ap-southeast-1.amazonaws.com%2Fuat-caas-media-storage%2Fupload%2Fphotos%2Fuser-upload-photo%2F5c83f83e-4d89-4cac-b7a7-697cfefbe64a-2d9dfc3161a24bccada34d358ca7d14b.jpg",
+          "title": "今天我要突破第二行，今天我要突破第二行，今天我要突破第二行，今天我要突破第二行，",
+          "text": "我是輪播訊息一",
+          "buttons": [
+            {
+              "isGrabbing": true,
+              "grabbingIndex": 0,
+              "title": "我會觸發歡迎模組",
+              // 互動按鈕的 id
+              "button_id": "dc782fc2-4c4c-4234-9d8e-5035656d5ef4",
+              "type": "postback",
+              // 互動按鈕所連接的模組 id
+              "uuid": "9fe190ed-ff72-411b-a71e-7215777cb7c5",
+              "idx": 0,
+              "index": 1,
+              "saveAttr": {
+                "key": "GTG_GIFT_MOBILE",
+                "value": "aaa",
+                "type": 1
+              }
+            },
+            {
+              "title": "我也會觸發歡迎模組",
+              // 互動按鈕的 id
+              "button_id": "b10b0395-3298-4f29-a3a6-2f7fa5644ee5",
+              "type": "postback",
+              // 互動按鈕所連接的模組 id
+              "uuid": "9fe190ed-ff72-411b-a71e-7215777cb7c5"
+            },
+            {
+              "title": "帶我去 google",
+              // 互動按鈕的 id
+              "button_id": "aff17739-8940-4d94-9c42-d4f72f12d952",
+              "type": "url",
+              "url": "google.com"
+            }
+          ],
+          "tempId": "0"
+        },
+        {
+          "imageUrl": "https%3A%2F%2Fs3-ap-southeast-1.amazonaws.com%2Fuat-caas-media-storage%2Fupload%2Fphotos%2Fuser-upload-photo%2F5c83f83e-4d89-4cac-b7a7-697cfefbe64a-d2f4cca1b7be4835a4b93868de48f208.jpg",
+          "title": "1600 * 900",
+          "text": "我是輪播訊息二 我是輪播訊息二 我是輪播訊息二 我是輪播訊息二 我是輪播訊息二 我是輪播訊息二 我是輪播訊息二 我是輪播",
+          "defaultAction": {
+            "type": "uri",
+            "title": "View detail",
+            "url": "http://google.com"
+          },
+          "buttons": [
+            {
+              "title": "我會觸發真人客服",
+              // 互動按鈕的 id
+              "button_id": "243d7c74-8da5-42b5-a3f8-a2e275f570b7",
+              "type": "postback",
+               // 互動按鈕所連接的模組 id
+              "uuid": "d4b75030-3664-4bee-865c-b8d114938794"
+            }
+          ],
+          "tempId": "1"
+        },
+        {
+          "imageUrl": "https%3A%2F%2Fs3-ap-southeast-1.amazonaws.com%2Fuat-caas-media-storage%2Fupload%2Fphotos%2Fuser-upload-photo%2F5c83f83e-4d89-4cac-b7a7-697cfefbe64a-b80d872ef4ab4da69cede9827956a2f2.jpg",
+          "title": "600*400",
+          "text": "我是副標題",
+          "defaultAction": {
+            "type": "uri",
+            "title": "View detail",
+            "url": "https://www.omnichat.ai/tw/"
+          },
+          "buttons": [
+            {
+              "title": "觸發真人客服",
+              // 互動按鈕的 id
+              "button_id": "1621402e-74d1-4f20-942b-9c87485133cf",
+              "type": "postback",
+              // 互動按鈕所連接的模組 id
+              "uuid": "d4b75030-3664-4bee-865c-b8d114938794"
+            }
+          ],
+          "tempId": "2"
+        },
+        {
+          "imageUrl": "https%3A%2F%2Fs3-ap-southeast-1.amazonaws.com%2Fuat-caas-media-storage%2Fupload%2Fphotos%2Fuser-upload-photo%2F5c83f83e-4d89-4cac-b7a7-697cfefbe64a-fde1e779bf1d4970b8dd8a87fa8677c4.jpg",
+          "title": "aaa",
+          "buttons": [
+            {
+              "title": "aaa",
+              // 互動按鈕的 id
+              "button_id": "af3a38b7-6cbe-45ab-ad7a-cccb532d285b",
+              "type": "url",
+              "url": "http://asd.com"
+            }
+          ],
+          "tempId": "3"
+        }
+      ],
+      "imageAspectRatio": "square",
+      "type": 203,
+      "creationDate": "001721203345563",
+      "modificationDate": "001721203345563",
+      "status": 1,
+      "idx": 0,
+      "index": 1
+    }
+  ],
+  "messageContent": null,
+  "creationDate": "001718873734835",
+  "modificationDate": "001726019980434",
+  "isExternal": false
+}
+
+```
+---
+
+## 計算模組間的連線 (edges)
+
+useBotsEdges.ts
+
+```ts {*}{maxHeight:'400px'}
+export const useBotsEdges = ({ messageBlocks }: { messageBlocks: any }) => {
+  const buttons = computed<Buttons>(() => messageBlocks.value.map((messageBlock: any) => {
+    const messageBlockId = messageBlock.id;
+    const messages = messageBlock.messages ?? [];
+    const extensions = Array.isArray(messages) ? messages.flatMap((message: any) => messageExtensionsWithMessageType(message)) : [];
+    return extensions.flatMap((extension: Extension) => {
+      switch (extension.type) {
+        case 501:
+          return generateUserInputButtonList({
+            messageBlockId,
+            extension
+          });
+        case 502:
+          return generateJsonApiButtonList({
+            buttonUUID: extension.messageId,
+            messageBlockId,
+            extension
+          });
+        case 504:
+          return generateConditionalButtonList({
+            buttonUUID: extension.messageId,
+            messageBlockId,
+            extension
+          });
+        default:
+          const buttons = extension.buttons ?? extension.carousel ?? extension.replies ?? [];
+          return buttons.map((button: any) => ({ ...button, messageBlockId }));
+      }
+    });
+  }).flat());
+
+  const wrapToFlowEdge = (button: Button) => ({
+    id: _uuid(),
+    source: button.messageBlockId,
+    sourceHandle: button.button_id,
+    target: button.uuid,
+    type: 'default',
+    ...button.labelConfig
+      ? {
+          label: button.labelConfig.label,
+          labelBgStyle: { fill: button.labelConfig.style.bgColor }
+        }
+      : {}
+  } as unknown as Edge);
+
+  const botsEdges = computed(() => buttons.value.map((button) => wrapToFlowEdge(button)));
+
+  return {
+    botsEdges
+  };
+};
+
+```
+
+---
+
+## 計算模組間的連線 (edges)
+
+BotFlow.vue
+```vue {*}{maxHeight:'400px'}
+<script setup lang="ts">
+import { useBotsEdges } from '@/views/BotBuilder/composable/useBotsEdges';
+
+const props = defineProps<{
+  botMessageBlocksData: MessageBlock[]
+}>();
+
+const { botsEdges } = useBotsEdges({ messageBlocks: computedMessageBlock });
+
+</script>
+<template>
+  <div>
+    <VueFlow
+      class="bot-flow"
+      :nodes="botsNodes"
+      :edges="botsEdges"
+      :max-zoom="10"
+      :min-zoom="0.1"
+      @nodes-initialized.once="handleNodesInitialized"
+      @node-click="handleNodeClick"
+      @pane-click="handleCloseDrawers"
+      @node-drag-stop="handleNodeDrag"
+      @selection-drag-stop="handleNodeDrag"
+    >
+  </div>
+</template>
+```
 
 ---
 layout: image-left
