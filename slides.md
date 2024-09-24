@@ -355,7 +355,7 @@ export const useBotsEdges = ({ messageBlocks }: { messageBlocks: any }) => {
           labelBgStyle: { fill: button.labelConfig.style.bgColor }
         }
       : {}
-  } as unknown as Edge);
+  });
 
   const botsEdges = computed(() => buttons.value.map((button) => wrapToFlowEdge(button)));
 
@@ -399,6 +399,121 @@ const { botsEdges } = useBotsEdges({ messageBlocks: computedMessageBlock });
   </div>
 </template>
 ```
+---
+layout: image-right
+
+# the image source
+image: /20240927/截圖 2024-09-24 下午4.16.19.png
+backgroundSize: contain
+
+---
+
+## 模組內的按鈕與其他模組的連接點 (handle)
+
+<ul class="mt-6">
+  <li>edge 方向左進右出</li>
+  <li>模組左上方進 (target)</li>
+  <li>模組內部各個按鈕出 (source)</li>
+</ul>
+
+---
+layout: two-cols-header
+---
+
+## 模組內的按鈕與其他模組的連接點 (handle)
+
+::left::
+
+NodeHandleWrapper.vue
+```vue
+<script setup lang="ts">
+import { Handle, Position } from '@vue-flow/core';
+</script>
+
+<template>
+  <div class="node-handle-wrapper">
+    <Handle
+      type="target"
+      :position="Position.Left"
+      :connectable="false"
+      class="node-handle"
+    />
+    <slot />
+  </div>
+</template>
+```
+
+::right::
+
+NestHandleWrapper.vue
+```vue {*}{maxHeight:'400px'}
+<script setup lang="ts">
+import type { Edge } from '@vue-flow/core';
+import { Handle, Position } from '@vue-flow/core';
+
+const props = defineProps({
+  handleId: {
+    type: String,
+    required: true
+  },
+  showHandle: {
+    type: Boolean,
+    required: true
+  },
+  top: {
+    type: String,
+    default: '50%'
+  },
+  position: {
+    type: String,
+    default: 'right'
+  }
+});
+
+const connectedEdges = inject('connectedEdges') as ComputedRef<Edge[]>;
+const nodeId = inject('nodeId');
+const selectedNodeId = inject('selectedNodeId') as Ref<string>;
+
+const connectedEdgesWithHandle = computed(() => connectedEdges?.value?.filter((edge) => edge.sourceHandle === props.handleId));
+const isConnected = computed(() => connectedEdgesWithHandle.value?.length > 0);
+
+const isSelectedNodeHandle = computed(() => selectedNodeId.value === nodeId);
+const isRelativeSelectedNode = computed(() => connectedEdgesWithHandle.value.some((edge) => edge.target === selectedNodeId.value));
+const isRelativeStyle = computed(() => isRelativeSelectedNode.value || isSelectedNodeHandle.value);
+
+const position = computed(() => {
+  switch (props.position) {
+    case 'bottom':
+      return Position.Bottom;
+    default:
+      return Position.Right;
+  }
+});
+</script>
+
+<template>
+  <div class="nest-handle-wrapper">
+    <Handle
+      :id="props.handleId"
+      type="source"
+      :position="position"
+      class="nest-handle"
+      :class="[
+        {
+          'nest-handle--disconnect': !isConnected,
+          'nest-handle--connect': isConnected,
+          'nest-handle--relative': isRelativeStyle,
+          'opacity-0': !props.showHandle,
+        },
+        `nest-handle--${props.position}`,
+      ]"
+      :connectable="false"
+    />
+    <slot />
+  </div>
+</template>
+```
+
 
 ---
 layout: image-left
