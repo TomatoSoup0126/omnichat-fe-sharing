@@ -23,7 +23,7 @@ layout: center
 
 - <Link to="key-points-of-refactor" title="改版重點、原則"/>
 - <Link to="architecture" title="架構"/>
-- <Link to="difficulties" title="難處"/>
+- <Link to="interesting-places" title="有趣的地方"/>
 - <Link to="derivative" title="衍生物"/>
 
 ---
@@ -130,16 +130,15 @@ BotBuilder.vue
   - 控制 BotFlow 的縮放行為
 
 ---
-routeAlias: difficulties
+routeAlias: interesting-places
 layout: center
 ---
 
-# 難處
+# 有趣的地方
 - 計算模組間的連線 (edges)
 - 按鈕與模組的連接點 (handle)
 - 找出異動的模組
 - 模組資料驗證
-- 模組選擇器
 
 ---
 
@@ -735,19 +734,154 @@ const {
 
 ```
 ---
-layout: image-left
 
-# the image source
-image: /20240711/Fred_Brooks.jpg
-backgroundSize: contain
+## 模組資料驗證
+
+使用 zod 做 schema 即時驗證
+
+useMessageBlockSchemaValidation.ts
+```ts {*}{maxHeight:'350px'}
+import { z } from 'zod';
+
+export const messageSchema = z.discriminatedUnion('type', [
+  chatbotTextButtonSchema,
+  chatbotTextSchema,
+  chatbotPhotoSchema,
+  chatbotCarouselSchema,
+  chatbotCarouselSquareSchema,
+  chatbotUserInputSchema,
+  jsonApiSchema,
+  chatbotQuickReplySchema,
+  chatbotConditionSchema
+]);
+
+const messageBlockSchemaValidation = (messageBlock: MessageBlock) => {
+  const schema = z.object({
+    id: z.string().min(1),
+    name: z.string().min(1),
+    messages: z.array(messageSchema).nonempty().refine(validateLastMessagePosition)
+  });
+
+  const result = schema.safeParse(messageBlock);
+  return result.success;
+};
+
+export const useMessageBlocksSchemaValidation = (messageBlocks: ComputedRef<MessageBlock[]>) => {
+  const validateList = computed(() => messageBlocks.value
+    .filter(({ type }) => type !== 'external')
+    .map((messageBlock) => messageBlockSchemaValidation(messageBlock)));
+  const isAllValidate = computed(() => validateList.value.every((validate) => validate));
+  return isAllValidate;
+};
+
+```
 
 ---
 
-# Frederick P. Brooks, Jr.
-- IBM OS/360 軟體經理
-- IBM 系統部主任
-- 北卡羅來納大學電腦科學學系創系教授
-- 1999 年圖靈獎得主
+## 模組資料驗證
+
+使用 zod 做 schema 即時驗證
+
+chatbotConditionSchema.ts
+```ts {*}{maxHeight:'350px'}
+import { z } from 'zod';
+import { MESSAGE_TYPE } from '@/constants/messageType';
+import { baseMessageSchema } from '@/views/BotBuilder/composable/useMessageBlockSchemaValidation/shareSchema';
+
+const baseConditionFilterSchema = z.object({
+  operator: z.string().min(1),
+  values: z.array(z.union([z.string(), z.number(), z.boolean()])).or(z.null())
+});
+
+const attributeConditionFilterSchema = baseConditionFilterSchema.extend({
+  attributeType: z.number(),
+  attributeKey: z.string().min(1)
+});
+
+const tagConditionFilterSchema = baseConditionFilterSchema.extend({
+  filterType: z.literal('tag'),
+  values: z.array(z.union([z.string(), z.number(), z.boolean()])).nonempty()
+});
+
+const systemAttributeConditionFilterSchema = attributeConditionFilterSchema.extend({
+  filterType: z.literal('systemAttribute'),
+  operator: z.string().min(1),
+});
+
+const customAttributeConditionFilterSchema = attributeConditionFilterSchema.extend({
+  filterType: z.literal('customAttribute'),
+  operator: z.string().min(1),
+  values: z.union([
+    z.array(z.union([z.string().min(1), z.number(), z.boolean()])).nonempty(),
+    z.null()
+  ])
+});
+
+const conditionFilterSchema = z.discriminatedUnion('filterType', [
+  tagConditionFilterSchema,
+  systemAttributeConditionFilterSchema,
+  customAttributeConditionFilterSchema
+]);
+
+export const chatbotConditionSchema = baseMessageSchema.extend({
+  type: z.literal(MESSAGE_TYPE.CONDITION),
+  extension: z.object({
+    filters: z.array(conditionFilterSchema).nonempty()
+  })
+});
+
+```
+
+---
+routeAlias: derivative
+layout: center
+---
+
+# 衍生物
+
+- usePlaceholder
+
+---
+layout: image-right
+
+# the image source
+image: /20240927/截圖 2024-09-25 下午5.23.08.png
+backgroundSize: contain
+---
+
+## usePlaceholder
+
+<ul class="mt-6">
+  <li>卡片預覽有各種 placeholder 的樣式</li>
+  <li>每種卡片 placeholder 文字內容都不同</li>
+</ul>
+
+---
+
+## usePlaceholder
+
+```vue {*}{maxHeight:'400px'}
+<script setup lang="ts">
+import { usePlaceholder } from '@/views/BotBuilder/composable/usePlaceholder';
+
+const {
+  showPlaceholder,
+  displayString
+} = usePlaceholder({
+  computedRef: computed(() => props.button?.title),
+  placeholderString: t('BOT_BUILDER.KEY88')
+});
+</script>
+
+<template>
+  <div
+    class="card-button"
+    :class="{ '!text-primary-003': showPlaceholder }"
+  >
+    {{ displayString }}
+  </div>
+</template>
+```
 
 ---
 layout: center
