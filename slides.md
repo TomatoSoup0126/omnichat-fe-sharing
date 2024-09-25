@@ -136,8 +136,9 @@ layout: center
 
 # 難處
 - 計算模組間的連線 (edges)
-- 模組內的按鈕與其他模組的連接點 (handle)
+- 按鈕與模組的連接點 (handle)
 - 找出異動的模組
+- 模組資料驗證
 - 模組選擇器
 
 ---
@@ -149,7 +150,7 @@ layout: center
 
 edge example
 
-```ts
+```json
 {
   // 互動按鈕的所屬模組 id
   "source":"f1c716e1-dc38-44e1-8477-f29f266cb9e2",
@@ -177,7 +178,7 @@ edge example
 
 原始資料長這樣 
 
-```ts {*}{maxHeight:'300px'}
+```json {*}{maxHeight:'300px'}
 {
   // 互動按鈕的所屬模組 id
   "id": "b9e37c8d-31ac-49a8-a7ef-932e610c5c9b",
@@ -408,7 +409,7 @@ backgroundSize: contain
 
 ---
 
-## 模組內的按鈕與其他模組的連接點 (handle)
+## 按鈕與模組的連接點 (handle)
 
 <ul class="mt-6">
   <li>edge 方向左進右出</li>
@@ -420,7 +421,7 @@ backgroundSize: contain
 layout: two-cols-header
 ---
 
-## 模組內的按鈕與其他模組的連接點 (handle)
+## 按鈕與模組的連接點 (handle)
 
 ::left::
 
@@ -514,7 +515,225 @@ const position = computed(() => {
 </template>
 ```
 
+---
 
+## 找出異動的模組
+新版 save api 只儲存異動的模組
+
+異動可以是模組修改位置、修改內容、刪除
+
+payload example
+```json {*}{maxHeight:'350px'}
+{
+  "upsertList": [
+    {
+      "blockId": "64705cfb-0a44-4d6b-b2fc-d24d77392a0d",
+      "blockName": "真人客服",
+      "title": "Demo",
+      "messages": [
+        {
+          "id": "a9a27411-167e-410e-a0a5-8b33c752a0c4",
+          "title": "文字訊息",
+          "message": "幫你找真人客服您",
+          "type": 301,
+          "expand": true,
+          "isAskForHuman": true,
+          "extension": {
+            "title": "幫你找真人客服您",
+            "buttons": []
+          }
+        }
+      ],
+      "isNew": false,
+      "position": {
+        "x": 934.4053235494302,
+        "y": 153.59115199695935
+      }
+    }
+  ],
+  "deleteIdList": [
+    "3cea30c7-3b23-45be-a045-08a19cfa15d1"
+  ]
+}
+```
+
+---
+
+## 找出異動的模組
+
+useDifferentCollection.ts
+```ts {*}{maxHeight:'400px'}
+import { isEqual, differenceBy, filter, omit } from 'lodash-es';
+import type { MessageBlock, PositionsData } from '@/views/BotBuilder/types';
+
+export const useDifferentCollection = (
+  {
+    originalBotMessageBlocksData,
+    botMessageBlocksData,
+    originalBotPositionsData,
+    botPositionsData
+  }:
+  {
+    originalBotMessageBlocksData: Ref<MessageBlock[]>
+    botMessageBlocksData: Ref<MessageBlock[]>
+    originalBotPositionsData: Ref<PositionsData>
+    botPositionsData: Ref<PositionsData>
+  }
+) => {
+  const differentMessageBlockCollection = computed(() => {
+    const originalDataList = originalBotMessageBlocksData.value;
+    const editedDataList = botMessageBlocksData.value;
+    // 找出已被刪除的模組 id
+    const deletedIdCollection = differenceBy(originalDataList, editedDataList, 'id').map((data) => data.id);
+    // 找出新增或已被修改的模組
+    const editedCollection = filter(editedDataList, (editData) => {
+      const originalData = originalDataList.find((data) => data.id === editData.id);
+      return !originalData || !isEqual(originalData, editData);
+    });
+    const editedIdCollection = editedCollection.map((data) => data.id);
+  
+    return {
+      editedCollection,
+      editedIdCollection,
+      deletedIdCollection
+    };
+  });
+
+  const differentPositionsCollection = computed(() => {
+    const originalDataList = originalBotPositionsData.value;
+    const editedDataList = botPositionsData.value;
+
+    const editedCollection: PositionsData = {};
+    // 從 editedDataList 中找出新增或已被修改的模組座標
+    Object.keys(editedDataList).forEach((key) => {
+      const isExistInOriginal = originalDataList[key];
+      if (!isExistInOriginal || !isEqual(originalDataList[key], editedDataList[key])) {
+        editedCollection[key] = editedDataList[key];
+      }
+    });
+
+    const editedIdCollection = Object.keys(editedCollection);
+
+    return {
+      editedCollection,
+      editedIdCollection
+    };
+  });
+
+  const totalDifferentCount = computed(() => {
+    const {
+      editedIdCollection: editedMessageBlockIdCollection,
+      deletedIdCollection: deletedMessageBlockIdCollection
+    } = differentMessageBlockCollection.value;
+    const {
+      editedIdCollection: editedPositionIdCollection
+    } = differentPositionsCollection.value;
+
+    // 用 Set 整理出所有異動的異動數量
+    return new Set([
+      ...editedMessageBlockIdCollection,
+      ...deletedMessageBlockIdCollection,
+      ...editedPositionIdCollection
+    ]).size;
+  });
+
+  const differentEditIdCollection = computed(() => {
+    const {
+      editedIdCollection: editedMessageBlockIdCollection
+    } = differentMessageBlockCollection.value;
+    const {
+      editedIdCollection: editedPositionIdCollection
+    } = differentPositionsCollection.value;
+    // 用 Set 整理出所有異動的 id
+    return new Set([
+      ...editedMessageBlockIdCollection,
+      ...editedPositionIdCollection
+    ]);
+  });
+
+  const generateUpsertFormat = (messageBlock: MessageBlock): UpsertItem => ({
+    blockId: messageBlock.id,
+    blockName: messageBlock.name,
+    title: messageBlock.title,
+    messages: messageBlock.messages?.map((message) => omit(message, ['grabbingIndex', 'idx', 'isGrabbing', 'index'])),
+    isNew: !originalBotMessageBlocksData.value.find((originalData) => originalData.id === messageBlock.id) && messageBlock.type !== 'external',
+    ...(messageBlock.isAskForHuman && { isAskForHuman: messageBlock.isAskForHuman })
+  });
+
+  const upsertList = computed(() => {
+    const editList: UpsertItem[] = [];
+
+    differentEditIdCollection.value.forEach((id) => {
+      const matchedMessageBlock = botMessageBlocksData.value.find((messageBlock) => messageBlock.id === id);
+      const matchedPosition = botPositionsData.value[id];
+      if (matchedMessageBlock) {
+        editList.push({
+          ...generateUpsertFormat(matchedMessageBlock),
+          position: matchedPosition
+        });
+      } else {
+        editList.push({
+          blockId: id,
+          position: matchedPosition
+        });
+      }
+    });
+
+    return editList;
+  });
+
+  return {
+    editedPositionsCollection: computed(() => differentPositionsCollection.value.editedCollection),
+    editedMessageBlockCollection: computed(() => differentMessageBlockCollection.value.editedCollection),
+    deletedMessageBlockIdCollection: computed(() => differentMessageBlockCollection.value.deletedIdCollection),
+    totalDifferentCount,
+    upsertList
+  };
+};
+
+```
+
+---
+
+## 找出異動的模組
+
+BotBuilder.vue
+```vue {*}{maxHeight:'400px'}
+<script setup lang="ts">
+import { useDifferentCollection } from '@/views/BotBuilder/composable/useDifferentCollection';
+
+const {
+  editedMessageBlockCollection,
+  deletedMessageBlockIdCollection,
+  totalDifferentCount,
+  upsertList
+} = useDifferentCollection({
+  botMessageBlocksData,
+  originalBotMessageBlocksData,
+  botPositionsData,
+  originalBotPositionsData
+});
+
+const isEditedMessageBlockBlockValid = useMessageBlocksSchemaValidation(editedMessageBlockCollection);
+
+const {
+  getChatbotDetail,
+  handleSave,
+  chatbotTypeList
+} = useBotBuilderApiHandler({
+  upsertList,
+  deletedMessageBlockIdCollection,
+});
+</script>
+
+<template>
+  <BuilderNavbar
+    :total-different-count="totalDifferentCount"
+    @save="handleSave"
+  />
+</template>
+
+```
 ---
 layout: image-left
 
