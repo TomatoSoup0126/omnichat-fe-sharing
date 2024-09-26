@@ -6,12 +6,12 @@ lineNumbers: false
 drawings:
   persist: false
 transition: slide-left
-title: FE Sharing 2024.09.27
+title: FE Sharing 2024.09.26
 mdc: true
 monaco: true
 ---
 
-# Sharing 2024.09.27
+# Sharing 2024.09.26
 
 Jonathan
 
