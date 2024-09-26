@@ -165,7 +165,7 @@ layout: center
 layout: image-right
 
 # the image source
-image: /20240927/截圖 2024-09-26 上午10.45.59.png
+image: /20240927/截圖 2024-09-26 中午12.21.04.png
 backgroundSize: contain
 
 ---
