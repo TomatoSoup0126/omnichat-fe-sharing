@@ -163,13 +163,119 @@ layout: center
 - beforeunload 事件
 
 ---
+layout: image-right
 
-## 計算模組間的連線 (edges)
+# the image source
+image: /20240927/截圖 2024-09-26 上午10.45.59.png
+backgroundSize: contain
 
-要找出各模組內的每個互動按鈕(buttons, replies, carousel, nextblockUUID...)
-並建立成 edge 的資料格式
+---
 
-edge example
+## 模組資料轉換成節點 (node)
+
+每個模組在 VueFlow 中被視為一個 node
+
+node example:
+
+```json
+{
+  // 模組本身的 id
+  "id":"ce3b9128-ec0f-410d-a66f-ad5c513e3959",
+  // 在 VueFlow 中的座標
+  "position":{
+    "x": -117,
+    "y": 345
+  },
+  // 模組本身的資料
+  "data": { ... },
+  // 辨識模組為機器人自身模組或外部模組
+  "type": "default",
+  // 供後續連線用的設定
+  "sourcePosition": "left",
+  "targetPosition":"right"
+}
+```
+
+---
+
+## 模組資料轉換成節點 (node)
+
+useBotsNodes.ts
+
+```ts {*}{maxHeight:'350px'}
+export const useBotsNodes = ({ messageBlocks, positionsData }: { messageBlocks: any, positionsData: any }) => {
+  const getNodePosition = (messageBlockId: string) => positionsData.value?.[messageBlockId] || {
+    x: 0,
+    y: 0
+  };
+
+  const wrapToFlowNode = (messageBlock: MessageBlock) => ({
+    id: messageBlock.id,
+    position: getNodePosition(messageBlock.id),
+    data: messageBlock,
+    type: messageBlock?.isExternal ? 'external' : 'default',
+    sourcePosition: 'left',
+    targetPosition: 'right'
+  });
+
+  const botsNodes = computed(() => messageBlocks.value
+    .map((messageBlock: MessageBlock) => wrapToFlowNode(messageBlock))
+  );
+
+  return {
+    botsNodes
+  };
+};
+
+```
+
+---
+
+## 模組資料轉換成節點 (node)
+
+BotFlow.vue
+```vue {*}{maxHeight:'400px'}
+<script setup lang="ts">
+import { useBotsNodes } from '@/views/BotBuilder/composable/useBotsNodes';
+
+const { botsNodes } = useBotsNodes({
+  messageBlocks: computedMessageBlock,
+  positionsData: botPositionsData
+});
+</script>
+<template>
+  <div>
+    <VueFlow
+      class="bot-flow"
+      :nodes="botsNodes"
+      :edges="botsEdges"
+      :max-zoom="10"
+      :min-zoom="0.1"
+      @nodes-initialized.once="handleNodesInitialized"
+      @node-click="handleNodeClick"
+      @pane-click="handleCloseDrawers"
+      @node-drag-stop="handleNodeDrag"
+      @selection-drag-stop="handleNodeDrag"
+    >
+  </div>
+</template>
+```
+
+---
+layout: image-right
+
+# the image source
+image: /20240927/截圖 2024-09-26 上午11.19.32.png
+backgroundSize: contain
+
+---
+
+## 計算模組間的連線 (edge)
+
+基於模組內的按鈕建立成 edge 的資料格式
+(buttons, replies, carousel, nextblockUUID...)
+
+edge example:
 
 ```json
 {
@@ -194,8 +300,7 @@ edge example
 
 ## 計算模組間的連線 (edges)
 
-要找出各模組內的每個互動按鈕(buttons, replies, carousel, nextblockUUID...)
-並建立成 edge 的資料格式
+基於模組內的按鈕建立成 edge 的資料格式 (buttons, replies, carousel, nextblockUUID...)
 
 原始資料長這樣 
 
@@ -396,12 +501,6 @@ BotFlow.vue
 ```vue {*}{maxHeight:'400px'}
 <script setup lang="ts">
 import { useBotsEdges } from '@/views/BotBuilder/composable/useBotsEdges';
-
-const props = defineProps<{
-  botMessageBlocksData: MessageBlock[]
-}>();
-
-const computedMessageBlock = computed(() => props.botMessageBlocksData);
 
 const { botsEdges } = useBotsEdges({ messageBlocks: computedMessageBlock });
 
