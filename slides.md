@@ -160,7 +160,6 @@ layout: center
 - 按鈕與模組的連接點 (handle)
 - 找出異動的模組
 - 模組資料驗證
-- beforeunload 事件
 
 ---
 layout: image-right
@@ -571,38 +570,7 @@ import { Handle, Position } from '@vue-flow/core';
 NestHandleWrapper.vue
 ```vue {*}{maxHeight:'400px'}
 <script setup lang="ts">
-import type { Edge } from '@vue-flow/core';
 import { Handle, Position } from '@vue-flow/core';
-
-const props = defineProps({
-  handleId: {
-    type: String,
-    required: true
-  },
-  showHandle: {
-    type: Boolean,
-    required: true
-  },
-  top: {
-    type: String,
-    default: '50%'
-  },
-  position: {
-    type: String,
-    default: 'right'
-  }
-});
-
-const connectedEdges = inject('connectedEdges') as ComputedRef<Edge[]>;
-const nodeId = inject('nodeId');
-const selectedNodeId = inject('selectedNodeId') as Ref<string>;
-
-const connectedEdgesWithHandle = computed(() => connectedEdges?.value?.filter((edge) => edge.sourceHandle === props.handleId));
-const isConnected = computed(() => connectedEdgesWithHandle.value?.length > 0);
-
-const isSelectedNodeHandle = computed(() => selectedNodeId.value === nodeId);
-const isRelativeSelectedNode = computed(() => connectedEdgesWithHandle.value.some((edge) => edge.target === selectedNodeId.value));
-const isRelativeStyle = computed(() => isRelativeSelectedNode.value || isSelectedNodeHandle.value);
 
 const position = computed(() => {
   switch (props.position) {
@@ -638,13 +606,64 @@ const position = computed(() => {
 ```
 
 ---
+layout: image-right
+
+# the image source
+image: /20240927/截圖 2024-09-26 上午11.37.31.png
+backgroundSize: contain
+
+---
+
+## 模組的連接點
+
+DefaultModuleCard.vue
+```vue
+<template>
+  <NodeHandleWrapper>
+    <div
+      class="default-module-card-container"
+      :class="{ 'default-module-card-container--selected': props.selected }"
+    >
+      ...
+    </div>
+  </NodeHandleWrapper>
+</template>
+```
+
+---
+layout: image-right
+
+# the image source
+image: /20240927/截圖 2024-09-26 上午11.37.39.png
+backgroundSize: contain
+
+---
+
+## 按鈕的連接點
+
+DefaultModuleCard.vue
+```vue
+<template>
+  <NestHandleWrapper
+    :key="button.button_id"
+    :handle-id="button.button_id"
+    :show-handle="!isLinkButton"
+  >
+    <div class="relative">
+      ...
+    </div>
+  </NestHandleWrapper>
+</template>
+```
+
+---
 
 ## 找出異動的模組
 新版 save api 只儲存異動的模組
 
 異動可以是模組修改位置、修改內容、刪除
 
-payload example
+payload example:
 ```json {*}{maxHeight:'350px'}
 {
   "upsertList": [
@@ -694,12 +713,6 @@ export const useDifferentCollection = (
     botMessageBlocksData,
     originalBotPositionsData,
     botPositionsData
-  }:
-  {
-    originalBotMessageBlocksData: Ref<MessageBlock[]>
-    botMessageBlocksData: Ref<MessageBlock[]>
-    originalBotPositionsData: Ref<PositionsData>
-    botPositionsData: Ref<PositionsData>
   }
 ) => {
   const differentMessageBlockCollection = computed(() => {
