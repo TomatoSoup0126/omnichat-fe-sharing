@@ -388,11 +388,21 @@ layout: center
 
 ## Use
 
-```vue
+```vue {*}{maxHeight:'400px'}
 <script setup lang="ts">
 import RemoteSearchSelector from '@/components/RemoteSearchSelector/RemoteSearchSelector.vue';
 
 const selectedId = defineModel<string>();
+
+const filterOption = (input: string, option: Option) => option.name.toLowerCase().includes(input.toLowerCase());
+
+const getCrossChannelConnectList = async () => {
+  const res = await Promise.all(props.platformForQuery.map(async (platform) => {
+    return getCrossChannelConnectListByPlatform(platform);
+  }));
+
+  return res.map((item) => item?.data?.content)?.flat();
+};
 
 const imagemapRemoteSearchConfig = computed(() => ({
   fieldNames: {
@@ -402,10 +412,10 @@ const imagemapRemoteSearchConfig = computed(() => ({
   filterOption,
   fetchListHandler: getCrossChannelConnectList,
   showAddItem: true,
-  selectPlaceholder: t('BOT_BUILDER.KEY312'),
-  addItemText: t('BOT_BUILDER.KEY314'),
-  addItemLink: asgardCrossChannelConnectLink.value,
-  noSearchResultText: t('BOT_BUILDER.KEY315'),
+  selectPlaceholder: '請選擇整合活動',
+  addItemText: '前往新增活動',
+  addItemLink: `${import.meta.env.VITE_ASGARD_URL}/omni-link/omni-link-list`),
+  noSearchResultText: '請先新增活動',
 }));
 </script>
 <template>
