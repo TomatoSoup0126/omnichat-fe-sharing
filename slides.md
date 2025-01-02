@@ -6,7 +6,7 @@ lineNumbers: false
 drawings:
   persist: false
 transition: slide-left
-title: FE Sharing 2024.09.26
+title: FE Sharing 2025.01.02
 mdc: true
 monaco: true
 ---
@@ -458,6 +458,29 @@ const imagemapRemoteSearchConfig = computed(() => ({
 <div class="w-50">
   <img src="/20250102/Group 19997 (1).png" class="w-full">
 </div>
+
+---
+
+## Expose
+
+```vue
+<script setup lang="ts">
+
+const selector = ref<InstanceType<typeof RemoteSearchSelector>>();
+
+const channelList = computed(() => selector.value?.itemList || []);
+const selectedChannel = computed(() => selector.value?.selectedItem || null);
+
+</script>
+
+<template>
+  <RemoteSearchSelector
+    ref="selector"
+    v-model="selectedId"
+    :config="imagemapRemoteSearchConfig"
+  />
+</template>
+```
 
 ---
 
