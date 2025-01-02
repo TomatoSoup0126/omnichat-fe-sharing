@@ -484,6 +484,59 @@ const selectedChannel = computed(() => selector.value?.selectedItem || null);
 
 ---
 
+## DropdownRender slot bug
+
+<div class="flex gap-4">
+  <div class="w-200 h-full flex justify-center items-center flex-col gap-4">
+    <img src="/20250102/截圖 2025-01-02 上午11.38.48.png" class="w-full">
+  </div>
+  <div class="w-50 h-full mt-20 flex justify-center items-center flex-col gap-4">
+    <img src="/20250102/螢幕錄影 2025-01-02 上午11.55.48.gif" class="w-full">
+  </div>
+</div>
+
+---
+
+## DropdownRender slot bug
+
+Select.vue
+
+```vue {monaco-diff}
+<script setup lang="ts">
+watch(model, async () => {
+  if (props.showSelectionTooltip) {
+    await nextTick();
+    const selectionItemEl: HTMLElement | null = document.querySelector('.show-selection-tooltip > .ant-select-selector > .ant-select-selection-item');
+    if (!selectionItemEl) return;
+    isSelectionStringTruncated.value = selectionItemEl.scrollWidth > selectionItemEl.clientWidth;
+  }
+});
+
+</script>
+~~~
+<script setup lang="ts">
+const slots = useSlots()
+const isDropdownRenderActive = computed(() => !!slots.dropdownRender);
+
+watch(model, async () => {
+  if (props.showSelectionTooltip) {
+    await nextTick();
+    const selectionItemEl: HTMLElement | null = document.querySelector('.show-selection-tooltip > .ant-select-selector > .ant-select-selection-item');
+    if (!selectionItemEl) return;
+    isSelectionStringTruncated.value = selectionItemEl.scrollWidth > selectionItemEl.clientWidth;
+  }
+
+  if (isDropdownRenderActive.value) {
+    nextTick(() => {
+      blurSelect();
+    });
+  }
+});
+</script>
+```
+
+---
+
 ## usePlaceholder
 
 ```vue {*}{maxHeight:'400px'}
