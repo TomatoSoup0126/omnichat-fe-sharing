@@ -120,7 +120,7 @@ routeAlias: writing-zod-schema
 
 ## 寫 zod schema - 1
 
-新增對應的新卡片 schema
+新增新的卡片 schema
 ```
 src/views/BotBuilder/composable/useMessageBlockSchemaValidation/NewPreviewCardSchema.ts
 ```
