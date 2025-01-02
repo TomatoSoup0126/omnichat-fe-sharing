@@ -371,9 +371,11 @@ layout: center
 
 # 衍生物
 
-- RemoteSearchSelector
-- useZodFormValidation 
+- <Link to="remote-search-selector" title="RemoteSearchSelector"/>
+- <Link to="use-zod-form-validation" title="useZodFormValidation"/>
 
+---
+routeAlias: remote-search-selector
 ---
 
 ## RemoteSearchSelector
@@ -536,29 +538,88 @@ watch(model, async () => {
 ```
 
 ---
+routeAlias: use-zod-form-validation
+layout: center
+---
 
-## usePlaceholder
+## useZodFormValidation
 
-```vue {*}{maxHeight:'400px'}
+<br>
+
+- 將 zod schema 轉成 Form rules
+- 將 zod schema 轉成 Form item rules
+
+---
+
+## Use
+
+將 zod schema 轉成 Form rules
+
+```vue {*|7-10|17,19}{maxHeight:'400px'}
 <script setup lang="ts">
-import { usePlaceholder } from '@/views/BotBuilder/composable/usePlaceholder';
+import { useZodFormValidation } from '@/composable/useZodFormValidation';
+import { crossChannelConnectSchema } from '...';
 
-const {
-  showPlaceholder,
-  displayString
-} = usePlaceholder({
-  computedRef: computed(() => props.button?.title),
-  placeholderString: t('BOT_BUILDER.KEY88')
+const extension = defineModel('extension');
+
+const { formRules } = useZodFormValidation({
+  schema: crossChannelConnectSchema,
+  computedForm: computed(() => extension.value)
 });
 </script>
 
 <template>
-  <div
-    class="card-button"
-    :class="{ '!text-primary-003': showPlaceholder }"
+<a-form
+  ref="crossChannelConnectFormRef"
+  :model="extension"
+  :rules="formRules"
+>
+  <FormItem :name="['crossChannelConnectId']">
+    <ChannelRemoteSearchSelector
+      ref="channelRemoteSearchSelector"
+      v-model="extension.crossChannelConnectId"
+      :platform-for-query="platformForQuery"
+    />
+  </FormItem>
+</a-form>
+</template>
+```
+
+---
+
+## Use
+
+將 zod schema 轉成 Form item rules
+
+```vue {*|7-10|18-21}{maxHeight:'400px'}
+<script setup lang="ts">
+import { useZodFormValidation } from '@/composable/useZodFormValidation';
+import { crossChannelConnectSchema } from '...';
+
+const extension = defineModel('extension');
+
+const { validateByNamePath } = useZodFormValidation({
+  schema: crossChannelConnectSchema,
+  computedForm: computed(() => extension.value)
+});
+</script>
+
+<template>
+<a-form
+  ref="crossChannelConnectFormRef"
+  :model="extension"
+>
+  <FormItem 
+    :name="['crossChannelConnectId']"
+    :rules="validateByNamePath(['crossChannelConnectId'])"
   >
-    {{ displayString }}
-  </div>
+    <ChannelRemoteSearchSelector
+      ref="channelRemoteSearchSelector"
+      v-model="extension.crossChannelConnectId"
+      :platform-for-query="platformForQuery"
+    />
+  </FormItem>
+</a-form>
 </template>
 ```
 
