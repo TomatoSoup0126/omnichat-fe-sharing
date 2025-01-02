@@ -206,7 +206,7 @@ export const jsonApiSchema = baseMessageSchema.extend({
 
 ## 寫 zod schema - 2
 
-放到 useMessageBlockSchemaValidation 中處理全域驗證
+加入 useMessageBlockSchemaValidation 中處理全域驗證
 
 ```ts
 import { newPreviewCardSchema } from '...';
@@ -346,9 +346,9 @@ edge 主要包含
 ::left::
 ```ts
 interface Button {
-  messageBlockId: string // 出發模組 id
-  button_id: string      // 出發按鈕 id
-  uuid: string           // 出發按鈕所連接的模組 id
+  messageBlockId: string // 出發模組 id (source)
+  button_id: string      // 出發按鈕 id (source handle)
+  uuid: string           // 出發按鈕所連接的模組 id (target)
   labelConfig?: {
     label: string
     style: {
