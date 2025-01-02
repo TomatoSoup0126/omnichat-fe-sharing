@@ -22,7 +22,7 @@ layout: center
 # 機器人 2.0 生存指南
 
 - <Link to="unfortunately-involved-in-making-new-cards" title="不幸被捲入要做新卡片的話"/>
-- <Link to="derivative" title="衍生物"/>
+- <Link to="derivative" title="可能有用的衍生物"/>
 
 ---
 routeAlias: unfortunately-involved-in-making-new-cards
@@ -369,7 +369,7 @@ routeAlias: derivative
 layout: center
 ---
 
-# 衍生物
+# 可能有用的衍生物
 
 - <Link to="remote-search-selector" title="RemoteSearchSelector"/>
 - <Link to="use-zod-form-validation" title="useZodFormValidation"/>
