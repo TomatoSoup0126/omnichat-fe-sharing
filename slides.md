@@ -388,13 +388,46 @@ layout: center
 
 ## Use
 
-```vue {*}{maxHeight:'400px'}
+```vue {*|2|21-25|23|4|24|6-18}{maxHeight:'400px'}
 <script setup lang="ts">
 import RemoteSearchSelector from '@/components/RemoteSearchSelector/RemoteSearchSelector.vue';
 
 const selectedId = defineModel<string>();
+// ...
+const imagemapRemoteSearchConfig = computed(() => ({
+  fieldNames: {
+    label: 'name',
+    value: 'id',
+  },
+  filterOption,
+  fetchListHandler: getCrossChannelConnectList,
+  showAddItem: true,
+  selectPlaceholder: '請選擇整合活動',
+  addItemText: '前往新增活動',
+  addItemLink: `${import.meta.env.VITE_ASGARD_URL}/omni-link/omni-link-list`),
+  noSearchResultText: '請先新增活動',
+}));
+</script>
+<template>
+  <RemoteSearchSelector
+    ref="selector"
+    v-model="selectedId"
+    :config="imagemapRemoteSearchConfig"
+  />
+</template>
+```
 
-const filterOption = (input: string, option: Option) => option.name.toLowerCase().includes(input.toLowerCase());
+---
+layout: two-cols-header
+---
+
+## Config
+
+::left::
+
+```vue {*|13-16|2,17|18,4-10|19|20|21,22|23|*}{maxHeight:'400px'}
+<script setup lang="ts">
+const filterOption = () => option.name.toLowerCase().includes(input.toLowerCase());
 
 const getCrossChannelConnectList = async () => {
   const res = await Promise.all(props.platformForQuery.map(async (platform) => {
@@ -418,14 +451,13 @@ const imagemapRemoteSearchConfig = computed(() => ({
   noSearchResultText: '請先新增活動',
 }));
 </script>
-<template>
-  <RemoteSearchSelector
-    ref="selector"
-    v-model="selectedId"
-    :config="imagemapRemoteSearchConfig"
-  />
-</template>
 ```
+
+::right::
+
+<div class="w-50">
+  <img src="/20250102/Group 19997 (1).png" class="w-full">
+</div>
 
 ---
 
