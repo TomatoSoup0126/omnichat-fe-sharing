@@ -303,6 +303,35 @@ layout: center
 - 重複上述步驟，直到流程順暢
 
 ---
+layout: image-right
+
+# the image source
+image: /20250327/the-unicorn-project.png
+backgroundSize: 50%
+
+---
+
+# 獨角獸專案
+- 鳳凰專案姊妹作
+- 風凰專案同一時間，開發部工程師的故事...
+
+---
+layout: center
+---
+
+# 題外話
+- 有興趣入手的話，這系列不要買電子書
+- 固定版面 epub，排版不能放大縮小
+- 字小眼睛痛
+
+<div class="flex items-center justify-center h-full gap-4 mt-4">
+
+  <img src="/20250327/screenshot_2025_03_26T01_41_23+0800.png" class="h-80" />
+  <img src="/20250327/screenshot_2025_03_26T01_41_31+0800.png" class="h-80" />
+
+</div>
+
+---
 layout: center
 ---
 
