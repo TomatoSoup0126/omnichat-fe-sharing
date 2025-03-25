@@ -91,6 +91,19 @@ layout: center
 layout: center
 ---
 
+# 書中提到的概念
+- <Link to="process-improvement" title="流程的改良"/>
+- <Link to="half-finished-product-crisis" title="半成品危機"/>
+- <Link to="four-types-of-work" title="四種工作類型"/>
+- <Link to="constraint-point-theory" title="約束點理論"/>
+- <Link to="wait-time-vs-utilization" title="需求等待時間"/>
+- <Link to="three-step-work-method" title="三步工作法"/>
+
+---
+routeAlias: process-improvement
+layout: center
+---
+
 # 流程的改良
 
 - 流程的目的是讓工作更順利，而不是增加困難
@@ -98,6 +111,7 @@ layout: center
 - 使用者願意使用的流程，才有機會成功
 
 ---
+routeAlias: half-finished-product-crisis
 layout: center
 ---
 
@@ -163,6 +177,7 @@ layout: center
 </v-click>
 
 ---
+routeAlias: four-types-of-work
 layout: center
 ---
 
@@ -223,6 +238,7 @@ layout: center
 - 四種工作類型的資源分配比重
 
 ---
+routeAlias: constraint-point-theory
 layout: center
 ---
 
@@ -265,10 +281,11 @@ layout: center
   - 尋找新的約束點
 
 ---
+routeAlias: wait-time-vs-utilization
 layout: center
 ---
 
-# 開發人員忙碌程度 vs 需求等待時間
+# 需求等待時間
 - 若所有需求的優先度都相同
 - 等待時間 = 開發人員忙碌百分比 / 開發人員閒置百分比
 
@@ -276,6 +293,7 @@ layout: center
 
 
 ---
+routeAlias: three-step-work-method
 layout: center
 ---
 
