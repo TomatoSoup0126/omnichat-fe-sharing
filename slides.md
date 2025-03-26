@@ -92,7 +92,7 @@ layout: center
 ---
 
 # 書中提到的概念
-- <Link to="process-improvement" title="流程的改良"/>
+- <Link to="process-improvement" title="流程"/>
 - <Link to="half-finished-product-crisis" title="半成品危機"/>
 - <Link to="four-types-of-work" title="四種工作類型"/>
 - <Link to="constraint-point-theory" title="約束點理論"/>
@@ -104,11 +104,16 @@ routeAlias: process-improvement
 layout: center
 ---
 
-# 流程的改良
+# 流程
 
+<v-click>
+
+- 生產出現困難，往往想要改良流程來達到目的
 - 流程的目的是讓工作更順利，而不是增加困難
 - 流程的設計要能夠符合使用者需求
-- 使用者願意使用的流程，才有機會成功
+- 使用者願意使用的流程，才有機會成功，而非流於形式
+
+</v-click>
 
 ---
 routeAlias: half-finished-product-crisis
@@ -117,7 +122,7 @@ layout: center
 
 # 半成品危機 - 1
 
-- 以工廠來說，原料進來到離廠之前，任何步驟後的產物都只算是半成品
+- 以工廠來說，原料進廠直到送達客戶手中之前，任何步驟後的產物都只算是半成品
 
 <v-click>
 
@@ -173,6 +178,7 @@ layout: center
 <v-click>
 
 - 以軟體開發來說，便是需要有效的控管需求進入開發的數量
+- 防止非必要的需求進入產線中比將重要需求排入產線中更為重要
 
 </v-click>
 
@@ -297,10 +303,44 @@ routeAlias: three-step-work-method
 layout: center
 ---
 
-# 三步工作法
-- 建立可視性的工作流程，將開發規模縮小且短
-- 設法根除計劃外工作
-- 重複上述步驟，直到流程順暢
+# 三步工作法 - 1
+
+<img src="/20250327/first-way2.png.webp" class="m-10 h-40" />
+
+- 第一步
+  - 建立穩定且能安全變更的工作流程
+  - 限制半成品數量
+  - 移除非必要需求
+  - 縮小開發規模與開發時間來持續產出
+
+---
+layout: center
+---
+
+# 三步工作法 - 2
+
+<img src="/20250327/second-way1.png.webp" class="m-10 h-40" />
+
+- 第二步
+  - 放大回饋
+  - 持續跟進業務目標
+  - 設法減少、根除計劃外工作
+  - 改進日常重複性工作
+
+---
+layout: center
+---
+
+# 三步工作法 - 3
+
+<img src="/20250327/third-way.png.webp" class="m-10 h-40" />
+
+- 第三步
+  - 創造高度信任、樂於嘗試、分享的風氣
+  - 減少低度信任、盲從與恐懼的風氣
+  - 增加時間用於 IT 內部需求開發、改進
+  - 形成更有韌性的開發流程
+
 
 ---
 layout: image-right
