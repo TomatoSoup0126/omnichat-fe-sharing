@@ -108,13 +108,29 @@ layout: center
 
 <v-click>
 
-- 生產出現困難，往往想要改良流程來達到目的
-- 流程的目的是讓工作更順利，而不是增加困難
-- 流程的設計要能夠符合使用者需求
-- 使用者願意使用的流程，才有機會成功，而非流於形式
+- 產線表現不如預期，往往想要改良流程來達到目的
 
 </v-click>
 
+<v-click>
+
+- 流程的目的是讓工作更順利，而不是增加困難
+
+</v-click>
+
+<v-click>
+
+- 流程的調整要能讓參與者了解
+  - 調整後能解決的問題
+  - 調整後帶來的效益
+
+</v-click>
+
+<v-click>
+
+- 參與者願意投入的流程，才是實際存在的流程
+
+</v-click>
 ---
 routeAlias: half-finished-product-crisis
 layout: center
@@ -140,7 +156,7 @@ layout: center
 # 半成品危機 - 2
 
 - 軟體開發也是一樣
-  - 需求開始開發後，在交付給使用者之前，都是半成品
+  - 需求進入開發後，直到交付給使用者之前，都是半成品
   - 就算已經開發完成，未經測試、未經部署，一樣還是半成品
 
 <v-click>
@@ -175,12 +191,16 @@ layout: center
 
 </v-click>
 
-<v-click>
+---
+layout: center
+---
+
+# 半成品危機 - 4
 
 - 以軟體開發來說，便是需要有效的控管需求進入開發的數量
-- 防止非必要的需求進入產線中比將重要需求排入產線中更為重要
-
-</v-click>
+  - 防止非必要的需求進入開發
+  - 將需求排入開發
+  - 前者比後者更為重要
 
 ---
 routeAlias: four-types-of-work
@@ -238,7 +258,7 @@ layout: two-cols-header
 layout: center
 ---
 
-# 意識到手上的工作分類
+# 目前手上有什麼工作分類？
 - 了解每類工作占用時間的比例
 - 明確意識到計劃外工作的存在
 - 四種工作類型的資源分配比重
@@ -295,7 +315,13 @@ layout: center
 - 若所有需求的優先度都相同
 - 等待時間 = 開發人員忙碌百分比 / 開發人員閒置百分比
 
+<v-click>
+
 <img src="/20250327/wait-time-vs-utilization.png" class="m-10 h-60" />
+
+</v-click>
+
+
 
 
 ---
@@ -303,11 +329,16 @@ routeAlias: three-step-work-method
 layout: center
 ---
 
-# 三步工作法 - 1
+# 三步工作法
+
+---
+layout: center
+---
+
+# 第一步 - 系統思維
 
 <img src="/20250327/first-way2.png.webp" class="m-10 h-40" />
 
-- 第一步
   - 建立穩定且能安全變更的工作流程
   - 限制半成品數量
   - 移除非必要需求
@@ -317,13 +348,13 @@ layout: center
 layout: center
 ---
 
-# 三步工作法 - 2
+# 第二步 - 放大回饋
 
 <img src="/20250327/second-way1.png.webp" class="m-10 h-40" />
 
-- 第二步
-  - 放大回饋
-  - 持續跟進業務目標
+  - 將交付後的回饋有效的帶回開發源頭
+    - 再次從源頭控管品質
+    - 持續跟進業務目標，排除非必要需求
   - 設法減少、根除計劃外工作
   - 改進日常重複性工作
 
@@ -331,11 +362,14 @@ layout: center
 layout: center
 ---
 
-# 三步工作法 - 3
+# 第三步 - 持續學習與實驗的文化
 
-<img src="/20250327/third-way.png.webp" class="m-10 h-40" />
+<div class="flex items-center justify-center h-full gap-4 mt-4">
 
-- 第三步
+  <img src="/20250327/third-way.png.webp" class="m-10 h-40" />
+
+</div>
+
   - 創造高度信任、樂於嘗試、分享的風氣
   - 減少低度信任、盲從與恐懼的風氣
   - 增加時間用於 IT 內部需求開發、改進
