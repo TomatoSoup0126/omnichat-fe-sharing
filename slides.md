@@ -41,8 +41,18 @@ layout: center
 
 # 主角 Bill
 - 無極限零件公司的 IT 部門小主管
-- 被告知他上面的兩位主管都請辭走人了
+
+<v-click>
+
+- CEO 告知他上面的兩位主管都請辭走人了
+
+</v-click>
+
+<v-click>
+
 - 原地提拔成為 IT 部門主管
+
+</v-click>
 
 ---
 layout: center
@@ -133,6 +143,12 @@ layout: center
 </v-click>
 ---
 routeAlias: half-finished-product-crisis
+layout: center
+---
+
+# 半成品危機
+
+---
 layout: center
 ---
 
@@ -265,6 +281,12 @@ layout: center
 
 ---
 routeAlias: constraint-point-theory
+layout: center
+---
+
+# 約束點理論
+
+---
 layout: center
 ---
 
