@@ -18,3 +18,5 @@
   - Bot builder refactor
 - ## [fe-sharing-2025-01-02](https://fe-sharing-2025-01-02.netlify.app/)
   - Bot builder guide
+- ## [fe-sharing-2025-03-27](https://fe-sharing-2025-03-27.netlify.app/)
+  - The Phoenix Project
