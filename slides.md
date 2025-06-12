@@ -1,541 +1,247 @@
 ---
-background: https://source.unsplash.com/collection/94734566/1920x1080
+background: https://images.unsplash.com/photo-1606422296071-bbf764bfdb71?q=80&w=2950
 class: text-center
 highlighter: shiki
 lineNumbers: false
 drawings:
   persist: false
 transition: slide-left
-title: FE Sharing 2024.05.02
+title: FE Sharing 2025.06.26
 mdc: true
 monaco: true
 ---
 
-# Sharing 2024.05.02
+# Sharing 2025.06.26
 
 Jonathan
 
 ---
 layout: center
 ---
-
-# Custom component / tool in Asgard
-
-- <Link to="select-input" title="Select input"/>
-- <Link to="file-previewer" title="File previewer"/>
-- <Link to="use-route-hash" title="useRouteHash"/>
-- <Link to="i18n-sync-cli" title="i18n sync CLI"/>
+# Today's sharing
+- <Link to="hermes-update" title="Hermes update"/>
+- <Link to="edge-tooltip-menu" title="Edge tooltip & menu"/>
+- <Link to="use-route-query" title="useRouteQuery"/>
+- <Link to="slidev-extensions" title="Slidev extensions"/>
 
 ---
-routeAlias: select-input
+routeAlias: hermes-update
 ---
 
-# Select input
+# Hermes update
 
-<div  class="flex items-center h-3/4 justify-center">
-  <div class="w-1/2">
-    <img src="/20240502/截圖 2024-05-01 下午3.10.05.png" >
-  </div>
-</div>
+- Container width toggle
+- i18n support zh-tw & en
+
+---
+layout: iframe
+
+# Hermes update
+url: https://uat-pages.omnichat.ai/hermes?lang=zh-Hant#CustomerLimitReached
+scale: 0.85
+---
+# Hermes site
 ---
 
 # Use
 
 ```vue
 <script setup>
-import SelectInput from '@/components/form/SelectInput.vue';
+import { t, locale } from '@/plugins/i18n';
 
-const optionList = [
-  {
-    text: '姓名',
-    value: 'name'
-  }
-]
-const searchParams = ref({
-  type: 'name'
-  input: ''
+const upgradeUrl = computed(() => {
+  return locale.value === 'en' ? 'https://www.omnichat.ai/pricing' : 'https://www.omnichat.ai/tw/pricing';
 });
 </script>
 
 <template>
-  <SelectInput
-    v-model="params"
-    :option-list="optionList"
-    @change="changeHandler"
+  <LinkButton
+    :text="t('trialExpired.upgrade')"
+    :href="upgradeUrl"
   />
 </template>
 ```
 
 ---
+routeAlias: edge-tooltip-menu
+layout: image-right
+image: /public/20250626/Group 199983.png
+backgroundSize: 80%
+---
 
-# Component structure
+# Edge tooltip & menu
 
-```markdown {all}
-SelectInput
- ┣ Select
- ┗ Input
-```
+- Display a tooltip when hovering over an edge
+- Display a menu when clicking on an edge
 
-```vue {all}{maxHeight:'300px'}
+---
+layout: image-right
+image: /public/20250626/Group 19998.png
+backgroundSize: 80%
+---
 
+# Tooltip / menu's position
+
+- The tooltip / menu's position is relative to the cursor, not the edge.
+
+---
+layout: iframe
+
+url: https://uat-console-v2.omnichat.ai/bot-builder/feffcc6c-9716-4f26-a28e-74c4f3378c8d?target=bea5016d-f962-4e3b-9a1f-856bfcdf805a
+scale: 0.75
+---
+# Bot builder 2.0
+---
+
+# Implementation
+
+
+#### BotFlow.vue
+```vue {3-10}
 <template>
-  <div
-    class="d-flex custom-select-input"
-  >
-    <Select
-      class="custom-select-input--select"
-      :value="props.value.type"
-      :items="props.optionList"
-      item-text="text"
-      item-value="value"
-      :hide-details="true"
-      @change="(value) => handleSelectChange(value)"
+  <div>
+    <EdgeMenu
+      :bots-edges="botsEdges"
+      :bots-nodes="botsNodes"
     />
-    <Input
-      :value="props.value.input"
-      type="text"
-      class="custom-select-input--text"
-      clear-icon="mdi-close-circle"
-      clearable
-      :hide-details="true"
-      :placeholder="$t('TEAMMATE.PLEASE_SEARCH')"
-      @change="(value) => handleChange({ key:'input', value })"
+    <EdgeTooltip
+      :bots-edges="botsEdges"
+      :bots-nodes="botsNodes"
+    />
+    <VueFlow
+      :nodes="botsNodes"
+      :edges="botsEdges"
+      ...
     />
   </div>
 </template>
-
-<style lang="scss" scoped>
-.custom-select-input {
-  height: 32px;
-  border: 1px solid $neutral-cold-053;
-  border-radius: 4px;
-  box-sizing: border-box;
-
-  &:has(:focus) {
-    transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
-    border-color: $primary-001;
-    box-shadow: 0px 0px 0px 2px rgba(64, 143, 255, 0.25);
-  }
-}
-...
-</style>
-
 ```
 
 ---
-routeAlias: file-previewer
+
+# Implementation
+
+#### DefaultEdge.vue
+
+```vue {2|4,13|6-11|15-20|22-30|all}{maxHeight:'400px'}
+<script setup>
+const { onEdgeMouseEnter, onEdgeMouseLeave, onEdgeClick } = useVueFlow();
+
+onEdgeMouseEnter(({ edge, event }) => {
+  if (edge.id === props.id) {
+    isHovering.value = true;
+    hoverEdgeId.value = edge.id;
+    hoverEdgeMenuPosition.value = {
+      x: event.clientX,
+      y: event.clientY - 93
+    };
+  }
+});
+
+onEdgeMouseLeave(({ edge }) => {
+  if (edge.id === props.id) {
+    isHovering.value = false;
+    hoverEdgeId.value = '';
+  }
+});
+
+onEdgeClick(({ edge, event }) => {
+  if (edge.id === props.id) {
+    clickedEdgeId.value = edge.id;
+    clickedEdgeMenuPosition.value = {
+      x: event.clientX,
+      y: event.clientY - 93
+    };
+  }
+});
+</script>
+```
+---
+routeAlias: use-route-query
 ---
 
-# File Previewer
+# useRouteQuery
 
-<div  class="flex items-center h-3/4">
-  <div class="w-1/2">
-    <img src="/20240502/截圖 2024-04-28 上午10.46.13.png" >
-  </div>
-  <div class="w-1/2">
-    <img src="/20240502/截圖 2024-04-28 上午10.47.18.png" >
-  </div>
-</div>
+#### asgard/src/components/composables/useRouteQuery.js
+```js {all}
+import { computed } from 'vue';
+import { debounce } from 'lodash-es';
+
+export function useRouteQuery() {
+  const route = useRoute();
+  const router = useRouter();
+
+  const query = computed(() => route.query);
+  const updateUrlQuery = debounce((value) => {
+    router.replace({
+      query: {
+        ...query.value,
+        ...value
+      }
+    });
+  }, 400);
+
+  return {
+    query,
+    updateUrlQuery
+  };
+}
+
+```
 
 ---
 
 # Use
 
-```vue
+```vue {all}
 <script setup>
-import FilePreviewer from '@/components/filePreviewer/FilePreviewer.vue';
+const { updateUrlQuery, query } = useRouteQuery();
+const handleUpdateOption = (options) => {
+  const updateQuery = {
+    page: options.page,
+    pageSize: options.itemsPerPage,
+  };
 
-const filePath = ref('')
-const height = ref(200)
-const showDownloadButton = ref(false)
-</script>
-
-<template>
-  <FilePreviewer
-    :file-path="filePath"
-    :height="height"
-    :show-download-button="showDownloadButton"
-  />
-</template>
-```
----
-layout: iframe
-
-# the web page source
-url: http://localhost:8080/design-guideline-sample
----
-
----
-
-# Component structure
-
-```markdown {all|1|2,5}
-FilePreviewer
- ┣ ImagePreviewer.vue
- ┃ ┣ ViewerContainer
- ┃ ┗ LightboxDialog
- ┗ PdfPreviewer.vue
-   ┗ ViewerContainer
-```
-<v-clicks>
-```vue
-<script setup>
-// ...
-const isPdfFile = computed(() => props.filePath.endsWith('.pdf'));
-</script>
-<template>
-  <div>
-    <PdfPreviewer
-      v-if="isPdfFile"
-      v-bind="$props"
-    />
-    <ImagePreviewer
-      v-else
-      v-on="$listeners"
-      v-bind="$props"
-    />
-  </div>
-</template>
-
-```
-</v-clicks>
-
----
-
-# Component structure
-
-```markdown {2}
-FilePreviewer
- ┗ ImagePreviewer.vue
-   ┣ ViewerContainer
-   ┗ LightboxDialog
-```
-
-```vue {all}{maxHeight:'300px'}
-<script setup>
-const showLightbox = ref(false);
-
-const actionList = computed(() => ([
-  {
-    type: 'expand',
-    icon: 'expand',
-    action: () => {
-      showLightbox.value = true;
-    }
-  },
-  {
-    type: 'download',
-    icon: 'export_download',
-    action: () => {
-      downloadImageFromUrl(props.filePath);
-    }
-  }
-]));
-</script>
-<template>
-  <ViewerContainer :action-list="actionList">
-    <template #previewPanel>
-      <img :src="props.filePath">
-    </template>
-  </ViewerContainer>
-  <LightboxDialog
-    :file-path="props.filePath"
-    :display="showLightbox"
-    @close="showLightbox = false"
-  />
-</template>
-
-```
-
----
-
-# Component structure
-
-```markdown {3}
-FilePreviewer
- ┗ ImagePreviewer.vue
-   ┣ ViewerContainer
-   ┗ LightboxDialog
-```
-
-```vue {all}{maxHeight:'300px'}
-<template>
-  <v-sheet
-    class="viewer-container"
-    :style="{'--height': `${props.height}px`}"
-    width="100%"
-    height="100%"
-  >
-    <div
-      class="action-panel"
-      v-if="hasActionList"
-    >
-      <SvgIcon
-        v-for="action in props.actionList"
-        class="pointer-cursor"
-        :key="action.type"
-        :icon-class="action.icon"
-        size="32"
-        color="#FFFFFF"
-        @click="action.action"
-      />
-    </div>
-    <div class="preview-panel">
-      <slot name="previewPanel" />
-    </div>
-  </v-sheet>
-</template>
-
-```
-
----
-
-# Component structure
-
-```markdown {4}
-FilePreviewer
- ┗ ImagePreviewer.vue
-   ┣ ViewerContainer
-   ┗ LightboxDialog
-```
-
-```vue {all}{maxHeight:'300px'}
-<template>
-  <v-dialog
-    class="lightbox-dialog"
-    :value="props.display"
-    fullscreen
-    hide-overlay
-    @keydown="close"
-  >
-    <div class="mask" />
-    <div class="action-container">
-      <div
-        class="action-btn"
-        @click="downloadImageFromUrl(props.filePath)"
-      >
-        <SvgIcon
-          v-if="props.showDownloadButton"
-          icon-class="export_download"
-          size="40"
-          color="#FFFFFF"
-        />
-      </div>
-      <div
-        class="action-btn"
-        @click="close"
-      >
-        <SvgIcon
-          class="pointer-cursor"
-          icon-class="cancel"
-          size="40"
-          color="#FFFFFF"
-        />
-      </div>
-    </div>
-    <div class="preview-img">
-      <img
-        :src="props.filePath"
-        alt="preview"
-        width="100%"
-        height="100%"
-      >
-    </div>
-  </v-dialog>
-</template>
-
-```
-
----
-
-# Component structure
-
-```markdown {2}
-FilePreviewer
- ┗ PdfPreviewer.vue
-   ┗ ViewerContainer
-```
-
-```vue {all}{maxHeight:'300px'}
-<script setup>
-import { pdfjs } from '@/utils/pdfjs.js';
-
-const getDocument = async () => {
-  try {
-    if (!props.filePath) {
-      return;
-    }
-    isLoading.value = true;
-    const file = await pdfjs.getDocument(props.filePath).promise;
-    pdfDocument.value = file;
-
-    const page = await file.getPage(1);
-    const viewport = page.getViewport({ scale: 1 });
-    const context = pdfContainer.value.getContext('2d');
-
-    pdfContainer.value.height = viewport.height;
-    pdfContainer.value.width = viewport.width;
-
-    page.render({
-      canvasContext: context,
-      viewport
-    });
-  } catch (error) {
-    console.error('pdf read error:', error);
-  } finally {
-    isLoading.value = false;
-  }
+  updateUrlQuery(updateQuery);
 };
 </script>
 
 <template>
   <div>
-    <ViewerContainer :action-list="actionList">
-      <template #previewPanel>
-        <canvas ref="pdfContainer"/>
-      </template>
-    </ViewerContainer>
+    <span>{{ query }}</span>
+    <DataTable
+      :headers="headerList"
+      :items="props.rowData"
+      @update:options="handleUpdateOption"
+    />
   </div>
 </template>
 
 ```
 
 ---
-layout: iframe-right
-
-# the web page source
-url: https://mozilla.github.io/pdf.js/
-
+routeAlias: slidev-extensions
+layout: image-right
+image: /public/20250626/slidev-extensions.png
+backgroundSize: 80%
 ---
 
-# utils/pdfjs.js
+# Slidev extensions
 
-```js
-import * as pdfjs from 'pdfjs-dist';
-
-pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-  'pdfjs-dist/build/pdf.worker.js',
-  import.meta.url
-);
-
-export { pdfjs };
-
-```
+- by Anthony Fu
+- [marketplace](https://marketplace.cursorapi.com/items?itemName=antfu.slidev)
 
 ---
-routeAlias: use-route-hash
+layout: image
+
+image: /public/20250626/slidev-extensions-in-cursor.png
+backgroundSize: 85%
 ---
-
-# useRouteHash
-
-```js
-
-import { computed } from 'vue';
-
-export function useRouteHash() {
-  const route = useRoute();
-
-  const hash = computed(() => route.hash);
-  const hashValue = computed(() => route.hash.replace('#', ''));
-  const updateUrlHash = (value) => {
-    window.history.pushState(
-      null,
-      null,
-      `${route.path}#${value}`
-    );
-  };
-
-  return {
-    hash,
-    hashValue,
-    updateUrlHash
-  };
-}
-
-```
-
----
-
-# Use
-
-```vue
-<script setup>
-import { useRouteHash } from '@/components/composables/useRouteHash';
-
-const { hash, updateUrlHash } = useRouteHash();
-
-const breadcrumbs = computed(() => [
-  {
-    text: 'WhatsApp Flows',
-    to: {
-      name: 'whatsAppFlows',
-      hash: hash.value
-    }
-    // ...
-  }
-]);
-
-const handleWabaIdChange = (id) => {
-  updateUrlHash(id)
-}
-</script>
-
-```
-
----
-layout: iframe
-
-# useRouteHash in vueuse
-url: https://vueuse.org/router/useRouteHash
----
-
----
-routeAlias: i18n-sync-cli
----
-
-# i18n sync CLI
-
-```bash
-yarn lang:sync-cli
-```
-<v-clicks>
-```bash
-✔ Pick a tab › 通訊渠道｜Channels
-```
-</v-clicks>
-<v-clicks>
-```bash
-✔ Pick a feature › ＷhatsApp Flow
-```
-</v-clicks>
-<v-clicks>
-```bash
-✔ Input i18n key … flow
-```
-</v-clicks>
-<v-clicks>
-```bash
-✔ Ready to sync i18n? … no / yes
-```
-</v-clicks>
-
-<v-clicks>
-```json
-{
-  "FLOW": {
-    "KEY0": "測試用0",
-    "KEY1": "測試用1",
-    "KEY2": "測試用2",
-    "KEY3": "測試用3",
-    "KEY4": "測試用4",
-    "KEY5": "測試用5"
-  }
-}
-```
-</v-clicks>
-
 ---
 layout: center
 ---
 
-# The end
+<div class="flex flex-col items-center justify-center h-full">
+  <h1>The end</h1>
+  <PoweredBySlidev />
+</div>
