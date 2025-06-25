@@ -65,7 +65,7 @@ const upgradeUrl = computed(() => {
 ---
 routeAlias: edge-tooltip-menu
 layout: image-right
-image: /public/20250626/Group 199983.png
+image: /20250626/Group 199983.png
 backgroundSize: 80%
 ---
 
@@ -76,7 +76,7 @@ backgroundSize: 80%
 
 ---
 layout: image-right
-image: /public/20250626/Group 19998.png
+image: /20250626/Group 19998.png
 backgroundSize: 80%
 ---
 
@@ -222,7 +222,7 @@ const handleUpdateOption = (options) => {
 ---
 routeAlias: slidev-extensions
 layout: image-right
-image: /public/20250626/slidev-extensions.png
+image: /20250626/slidev-extensions.png
 backgroundSize: 80%
 ---
 
@@ -234,7 +234,7 @@ backgroundSize: 80%
 ---
 layout: image
 
-image: /public/20250626/slidev-extensions-in-cursor.png
+image: /20250626/slidev-extensions-in-cursor.png
 backgroundSize: 85%
 ---
 ---
