@@ -16,6 +16,88 @@ monaco: true
 Jonathan
 
 ---
+layout: image-right
+
+# the image source
+image: /20250327/phoenix-project-cover.jpg
+backgroundSize: 50%
+
+---
+
+# 鳳凰專案
+- 出版於 2013
+- 虛構小說
+- 從 IT 鬼故事看軟體開發與維運
+
+---
+layout: center
+--- 
+
+# 故事是這樣的
+
+---
+layout: center
+--- 
+
+# 主角 Bill
+- 無極限零件公司的 IT 部門小主管
+
+<v-click>
+
+- CEO 告知他上面的兩位主管都請辭走人了
+
+</v-click>
+
+<v-click>
+
+- 原地提拔成為 IT 部門主管
+
+</v-click>
+
+---
+layout: center
+--- 
+
+# 鳳凰專案
+- 公司線下銷售轉線上銷售的電商專案
+- 行銷部門可以在後台更精準的掌握銷售狀況
+- 產品部門可以在後台查看庫存、供應鏈系統以利原料採購、開發新商品
+
+---
+layout: center
+--- 
+
+# 鳳凰專案有什麼問題
+- 開發時程落後一年以上
+- 爆預算
+- 充滿 bug 與版本衝突
+
+---
+layout: center
+--- 
+
+# 開發部 > IT 部 > QA 部
+
+---
+layout: center
+--- 
+
+# Bill 馬上遇到的問題
+- 明天發薪的計算結果跑不出來，準備被業務工會告
+- 資安部提出 100 多項的安全問題，要滿足三天後的外部稽核
+- 其他 bug 等著要修正
+- 其他功能等著要上線
+- 鳳凰專案七天後要上線，出事就是整個部門裁撤並外包
+
+---
+layout: center
+--- 
+
+# 董事會成員 Erik
+- 藉由帶 Bill 逛生產工廠導出管理概念
+- 軟體開發 vs 工廠生產線
+
+---
 layout: center
 ---
 # Today's sharing
