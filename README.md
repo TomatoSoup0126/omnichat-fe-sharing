@@ -20,3 +20,8 @@
   - Bot builder guide
 - ## [fe-sharing-2025-03-27](https://fe-sharing-2025-03-27.netlify.app/)
   - The Phoenix Project
+- ## [fe-sharing-2025-06-26](https://fe-sharing-2025-06-26.netlify.app/)
+  - Hermes update
+  - Edge tooltip & menu
+  - useRouteQuery
+  - Slidev extensions
