@@ -1,17 +1,17 @@
 ---
-background: https://images.unsplash.com/photo-1606422296071-bbf764bfdb71?q=80&w=2950
+background: https://images.unsplash.com/photo-1583521214690-73421a1829a9?q=80&w=2070
 class: text-center
 highlighter: shiki
 lineNumbers: false
 drawings:
   persist: false
 transition: slide-left
-title: FE Sharing 2025.06.26
+title: FE Sharing 2025.09.11
 mdc: true
 monaco: true
 ---
 
-# Sharing 2025.06.26
+# Sharing 2025.09.11
 
 Jonathan
 
@@ -19,224 +19,312 @@ Jonathan
 layout: center
 ---
 # Today's sharing
-- <Link to="hermes-update" title="Hermes update"/>
-- <Link to="edge-tooltip-menu" title="Edge tooltip & menu"/>
-- <Link to="use-route-query" title="useRouteQuery"/>
-- <Link to="slidev-extensions" title="Slidev extensions"/>
+- <Link to="upload-file-size" title="驗證已上傳的檔案大小"/>
+- <Link to="presigned-urls" title="Presigned URLs"/>
+- <Link to="input-allow-regexp" title="Input Allow Regexp"/>
+---
+routeAlias: upload-file-size
+layout: center
+---
+
+# 驗證已上傳的檔案大小
 
 ---
-routeAlias: hermes-update
+layout: image-right
+image: /20250911/截圖 2025-09-09 上午10.47.15.png
+backgroundSize: 70%
 ---
 
-# Hermes update
+# 和以往上傳驗證的差異
 
-- Container width toggle
-- i18n support zh-tw & en
+- 跨平台複製機器人時，需要針對已上傳檔案大小的檢查
+- 以往是上傳前檢查，若超過上限則無法上傳
+- 跨平台前後的檔案大小限制不同，故需要針對已上傳的檔案大小進行檢查
 
 ---
-layout: iframe
-
-# Hermes update
-url: https://uat-pages.omnichat.ai/hermes?lang=zh-Hant#CustomerLimitReached
-scale: 0.85
+layout: center
 ---
-# Hermes site
+
+# 實作方向
+
+- 取得已上傳檔案的大小
+- Zod 全域驗證方式照舊
+- 原有影片、圖片的 zod schema 擴充，加入已上傳檔案大小的檢查
+---
+
+# 從 header 取得檔案大小
+
+```js {1-4|1-7|8-15}
+
+const url = 'https://images.unsplash.com/photo-1583521214690-73421a1829a9?q=80&w=2070';
+const response = await fetch(url, { method: 'HEAD' });
+const contentLength = response.headers.get('content-length'); // bytes
+
+console.log(`url bytes size: ${contentLength} bytes`);
+// url size: 453444 bytes
+
+const fileSizeInKB = contentLength ? parseInt(contentLength) / 1024 : 0;
+console.log(`url KB size: ${fileSizeInKB} KB`);
+// url size: 442.8163146972656 KB
+
+const fileSizeInMB = contentLength ? parseInt(contentLength) / 1024 / 1024 : 0;
+console.log(`url MB size: ${fileSizeInMB} MB`);
+// url size: 0.4324378967 MB
+
+```
+
+---
+layout: center
+---
+# 從 header 取得檔案大小
+
+#### Pros:
+  - 不用下載檔案
+  - 直接取得檔案大小
+
+<div class="my-6" />
+
+#### Cons:
+  - CDN 可能不支援 HEAD Method
+  - 單位只有 bytes
+
+---
+layout: center
+---
+
+### 後端表示：
+## S3 SDK 有提供方法可以查檔案大小
+
+---
+
+# 從 metadata API 取得檔案大小
+
+```js {1-7|all}
+// /niffler/src/restapi/bot.js
+
+export default {
+  getFileSize(fileUrl) {
+    return camelotApiHelper.get(`/v1/file/s3/metadata?url=${fileUrl}`);
+  }
+}
+
+const url = 'https://images.unsplash.com/photo-1583521214690-73421a1829a9?q=80&w=2070';
+
+const { data: { content } } = await getFileSize(url);
+
+console.log(content);
+// {
+//   "bytes": 453444,
+//   "megabyte": 0.43
+// }
+```
+
 ---
 
 # Use
 
-```vue
-<script setup>
-import { t, locale } from '@/plugins/i18n';
+```ts {1-12|13-19|21-28}{maxHeight:'400px'}
+// /niffler/src/views/BotBuilder/composable/useMessageBlockSchemaValidation/fileSizeUtils.ts
 
-const upgradeUrl = computed(() => {
-  return locale.value === 'en' ? 'https://www.omnichat.ai/pricing' : 'https://www.omnichat.ai/tw/pricing';
-});
-</script>
-
-<template>
-  <LinkButton
-    :text="t('trialExpired.upgrade')"
-    :href="upgradeUrl"
-  />
-</template>
-```
-
----
-routeAlias: edge-tooltip-menu
-layout: image-right
-image: /20250626/Group 199983.png
-backgroundSize: 80%
----
-
-# Edge tooltip & menu
-
-- Display a tooltip when hovering over an edge
-- Display a menu when clicking on an edge
-
----
-layout: image-right
-image: /20250626/Group 19998.png
-backgroundSize: 80%
----
-
-# Tooltip / menu's position
-
-- The tooltip / menu's position is relative to the cursor, not the edge.
-
----
-layout: iframe
-
-url: https://uat-console-v2.omnichat.ai/bot-builder/feffcc6c-9716-4f26-a28e-74c4f3378c8d?target=bea5016d-f962-4e3b-9a1f-856bfcdf805a
-scale: 0.75
----
-# Bot builder 2.0
----
-
-# Implementation
-
-
-#### BotFlow.vue
-```vue {3-10}
-<template>
-  <div>
-    <EdgeMenu
-      :bots-edges="botsEdges"
-      :bots-nodes="botsNodes"
-    />
-    <EdgeTooltip
-      :bots-edges="botsEdges"
-      :bots-nodes="botsNodes"
-    />
-    <VueFlow
-      :nodes="botsNodes"
-      :edges="botsEdges"
-      ...
-    />
-  </div>
-</template>
-```
-
----
-
-# Implementation
-
-#### DefaultEdge.vue
-
-```vue {2|4,13|6-11|15-20|22-30|all}{maxHeight:'400px'}
-<script setup>
-const { onEdgeMouseEnter, onEdgeMouseLeave, onEdgeClick } = useVueFlow();
-
-onEdgeMouseEnter(({ edge, event }) => {
-  if (edge.id === props.id) {
-    isHovering.value = true;
-    hoverEdgeId.value = edge.id;
-    hoverEdgeMenuPosition.value = {
-      x: event.clientX,
-      y: event.clientY - 93
-    };
-  }
-});
-
-onEdgeMouseLeave(({ edge }) => {
-  if (edge.id === props.id) {
-    isHovering.value = false;
-    hoverEdgeId.value = '';
-  }
-});
-
-onEdgeClick(({ edge, event }) => {
-  if (edge.id === props.id) {
-    clickedEdgeId.value = edge.id;
-    clickedEdgeMenuPosition.value = {
-      x: event.clientX,
-      y: event.clientY - 93
-    };
-  }
-});
-</script>
-```
----
-routeAlias: use-route-query
----
-
-# useRouteQuery
-
-#### asgard/src/components/composables/useRouteQuery.js
-```js {all}
-import { computed } from 'vue';
-import { debounce } from 'lodash-es';
-
-export function useRouteQuery() {
-  const route = useRoute();
-  const router = useRouter();
-
-  const query = computed(() => route.query);
-  const updateUrlQuery = debounce((value) => {
-    router.replace({
-      query: {
-        ...query.value,
-        ...value
+export async function buildFileSizeMapForSchemaValidation({ messageBlocks, urlPropertyName, sizeMapRef}) {
+  const fileUrls = new Set<string>();
+  
+  messageBlocks.forEach((block) => {
+    recursivelyVisitObject(block, (value) => {
+      if (value[urlPropertyName]) {
+        fileUrls.add(value[urlPropertyName]);
       }
     });
-  }, 400);
+  });
 
-  return {
-    query,
-    updateUrlQuery
-  };
+  const urlArray = Array.from(fileUrls);
+  
+  const sizesPromises = urlArray.map(url => 
+    getFileSizeFromUrl(url).then(size => ({ url, size }))
+  );
+  
+  try {
+    const results = await Promise.all(sizesPromises);
+    const sizeMap = new Map<string, number>();
+    
+    results.forEach(({ url, size }) => {
+      sizeMap.set(url, size);
+    });
+    
+    sizeMapRef.value = sizeMap;
+  } catch (error) {
+    console.error('Failed to build file size map:', error);
+  }
+}
+```
+
+---
+
+# Validate file size by refine schema
+
+```ts {all}
+chatbotVideoSchema.refine((data) => {
+  const fileSize = sizeMapRef.value.get(data.videoUrl) || 0;
+  const maxSizeInBytes = platformLimits[platform]
+
+  return fileSize <= maxSizeInBytes || fileSize === 0;
+}, {
+  message: 'File size is too large',
+  path: ['videoUrl'],
+});
+
+```
+
+---
+routeAlias: presigned-urls
+layout: center
+---
+
+# Presigned URLs
+
+---
+layout: center
+---
+
+# Presigned URLs？
+
+- 允許使用者在沒有驗證的情況下，直接從指定 S3 bucket 上傳 / 下載檔案的網址
+- 上傳 / 下載的條件由後端申請 presigned URL 時決定
+- 具有時效性，過期後無法使用
+- 前端上傳 / 下載檔案時，不經過後端
+
+<!-- http method、content-type、content-length 等限制由後端申請 presigned URL 時決定 -->
+
+---
+layout: center
+---
+
+### Presigned URLs Upload flow
+
+<div class="my-6" />
+
+```mermaid {theme: 'dark', scale: 0.7}
+sequenceDiagram
+    participant 前端 as 前端
+    participant 後端 as 後端  
+    participant S3 as AWS S3
+
+    前端->>後端: 1. 請求 presigned URL
+    後端->>S3: 2. 申請 presigned URL
+    S3->>後端: 3. 發行 presigned URL
+    後端->>前端: 4. 回傳 presigned URL
+    前端-->>S3: 5. 上傳檔案
+    S3-->>前端: 6. 回傳上傳結果
+```
+
+---
+layout: center
+---
+
+### Presigned URLs Upload & Import tags flow
+
+<div class="my-6" />
+
+```mermaid {theme: 'dark', scale: 0.6}
+sequenceDiagram
+    participant 前端 as 前端
+    participant 後端 as 後端  
+    participant S3 as AWS S3
+
+    前端->>後端: 1. 請求 presigned URL
+    後端->>S3: 2. 申請 presigned URL
+    S3->>後端: 3. 發行 presigned URL
+    後端->>前端: 4. 回傳 presigned URL & JobId
+    前端-->>S3: 5. 上傳檔案
+    S3-->>前端: 6. 回傳上傳結果
+    前端->>後端: 7. 用 JobId 啟動匯入流程
+    後端->>S3: 8. 從 JobId 取得 CSV 檔
+    S3->>後端: 9. 回傳 CSV 檔，執行匯入流程
+    後端->>前端: 10. 回傳匯入結果
+```
+
+---
+
+# Implementation
+
+```ts {1-5|6-10|11-14}
+
+// 1. 請求 presigned URL
+const { data } = await tagsApi.getPresignedUrl();
+jobId.value = data.content.jobId;
+presignedUrl.value = data.content.presignedUrl;
+
+// 5. 上傳檔案
+const res = await fetch(presignedUrl.value, {
+  method: 'PUT',
+  body: file.value
+});
+
+// 7. 用 JobId 啟動匯入流程
+if (res.ok) {
+  await handleStartTagImportJob();
 }
 
 ```
 
 ---
+routeAlias: input-allow-regexp
+layout: center
+---
 
-# Use
+# Input Allow Regexp
 
-```vue {all}
-<script setup>
-const { updateUrlQuery, query } = useRouteQuery();
-const handleUpdateOption = (options) => {
-  const updateQuery = {
-    page: options.page,
-    pageSize: options.itemsPerPage,
-  };
+---
+layout: center
+---
 
-  updateUrlQuery(updateQuery);
-};
-</script>
+# 需求
 
+##### OCPD-22400 串接 LINE 渠道 | 輸入 Channel ID 時僅可輸入數字
+- 該 Input 只能輸入數字
+
+---
+layout: center
+---
+
+# 實際需求
+
+- 儲存類型為字串
+- 雖然只能輸入數字，但不包含 -, e, . 等數學符號
+- 其實是要限制只能鍵入 0~9 的字串
+
+---
+layout: center
+---
+
+# 嘗試過的方法
+
+- Input type: number
+- blur & input event 處理 value
+
+---
+layout: center
+---
+
+# Input 新增 Allow Regexp 屬性
+
+```vue
 <template>
-  <div>
-    <span>{{ query }}</span>
-    <DataTable
-      :headers="headerList"
-      :items="props.rowData"
-      @update:options="handleUpdateOption"
-    />
-  </div>
+  <Input
+    v-model="channelId"
+    label="Channel ID"
+    auto-grow
+    :maxlength="60"
+    class="right-input"
+    :hide-details="false"
+    :allow-regexp="/^[0-9]+$/"
+  />
 </template>
-
 ```
 
----
-routeAlias: slidev-extensions
-layout: image-right
-image: /20250626/slidev-extensions.png
-backgroundSize: 80%
----
 
-# Slidev extensions
 
-- by Anthony Fu
-- [marketplace](https://marketplace.cursorapi.com/items?itemName=antfu.slidev)
 
----
-layout: image
-
-image: /20250626/slidev-extensions-in-cursor.png
-backgroundSize: 85%
----
 ---
 layout: center
 ---
