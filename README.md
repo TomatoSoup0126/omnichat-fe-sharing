@@ -25,3 +25,7 @@
   - Edge tooltip & menu
   - useRouteQuery
   - Slidev extensions
+- ## [fe-sharing-2025-09-11](https://fe-sharing-2025-09-11.netlify.app/)
+  - Validate upload file size
+  - Presigned urls
+  - Input allow regexp
