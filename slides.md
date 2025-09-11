@@ -108,7 +108,7 @@ export default {
   }
 }
 
-const url = 'https://images.unsplash.com/photo-1583521214690-73421a1829a9?q=80&w=2070';
+const url = 'https://uat-media-cdn.omnichat.ai/upload/photos/user-upload-photo/5c83f83e-4d89-4cac-b7a7-697cfefbe64a-abf7e675259f4bf098eea613627cf67f.jpg';
 
 const { data: { content } } = await getFileSize(url);
 
