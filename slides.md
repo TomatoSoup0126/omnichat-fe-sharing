@@ -1,17 +1,17 @@
 ---
-background: https://images.unsplash.com/photo-1625082688687-e4b9d610652f
+background: https://images.unsplash.com/photo-1623973792500-d2fa0aad9723
 class: text-center
 highlighter: shiki
 lineNumbers: false
 drawings:
   persist: false
 transition: slide-left
-title: FE Sharing 2025.03.27
+title: FE Sharing 2025.11.27
 mdc: true
 monaco: true
 ---
 
-# Sharing 2025.03.27
+# Sharing 2025.11.27
 
 Jonathan
 
@@ -19,15 +19,22 @@ Jonathan
 layout: image-right
 
 # the image source
-image: /20250327/phoenix-project-cover.jpg
+image: /20250327/the-unicorn-project.png
 backgroundSize: 50%
 
 ---
 
-# 鳳凰專案
-- 出版於 2013
-- 虛構小說
-- 從 IT 鬼故事看軟體開發與維運
+# 獨角獸專案
+- 出版於 2019
+- 鳳凰專案相隔六年的姊妹作
+- 從 **開發者** 視角看軟體開發與維運
+- 同一個時間軸，不同的故事
+
+---
+layout: image
+image: /20251127/timeline.png
+backgroundSize: 70%
+---
 
 ---
 layout: center
@@ -36,395 +43,291 @@ layout: center
 # 故事是這樣的
 
 ---
-layout: center
+layout: image-right
+image: /20251127/maxine.webp
+backgroundSize: 50%
 --- 
 
-# 主角 Bill
-- 無極限零件公司的 IT 部門小主管
-
-<v-click>
-
-- CEO 告知他上面的兩位主管都請辭走人了
-
-</v-click>
-
-<v-click>
-
-- 原地提拔成為 IT 部門主管
-
-</v-click>
+# 主角 Maxine
+- 公司裡的資深開發人員 / 架構師
+- 開源專案作者，熟悉開源軟體開發流程
+- 因為一次嚴重的薪資核算系統故障而被咎責（非他的鍋）
+- 被調職到鳳凰專案團隊，作為懲罰
 
 ---
 layout: center
 --- 
 
-# 鳳凰專案
-- 公司線下銷售轉線上銷售的電商專案
-- 行銷部門可以在後台更精準的掌握銷售狀況
-- 產品部門可以在後台查看庫存、供應鏈系統以利原料採購、開發新商品
-
----
-layout: center
---- 
-
-# 鳳凰專案有什麼問題
-- 開發時程落後一年以上
-- 爆預算
-- 充滿 bug 與版本衝突
-
----
-layout: center
---- 
-
-# 開發部 > IT 部 > QA 部
-
----
-layout: center
---- 
-
-# Bill 馬上遇到的問題
-- 明天發薪的計算結果跑不出來，準備被業務工會告
-- 資安部提出 100 多項的安全問題，要滿足三天後的外部稽核
-- 其他 bug 等著要修正
-- 其他功能等著要上線
-- 鳳凰專案七天後要上線，出事就是整個部門裁撤並外包
-
----
-layout: center
---- 
-
-# 董事會成員 Erik
-- 藉由帶 Bill 逛生產工廠導出管理概念
-- 軟體開發 vs 工廠生產線
-
----
-layout: center
----
-
-# 書中提到的概念
-- <Link to="process-improvement" title="流程"/>
-- <Link to="half-finished-product-crisis" title="半成品危機"/>
-- <Link to="four-types-of-work" title="四種工作類型"/>
-- <Link to="constraint-point-theory" title="約束點理論"/>
-- <Link to="wait-time-vs-utilization" title="需求等待時間"/>
-- <Link to="three-step-work-method" title="三步工作法"/>
-
----
-routeAlias: process-improvement
-layout: center
----
-
-# 流程
-
-<v-click>
-
-- 產線表現不如預期，往往想要改良流程來達到目的
-
-</v-click>
-
-<v-click>
-
-- 流程的目的是讓工作更順利，而不是增加困難
-
-</v-click>
-
-<v-click>
-
-- 流程的調整要能讓參與者了解
-  - 調整後能解決的問題
-  - 調整後帶來的效益
-
-</v-click>
-
-<v-click>
-
-- 參與者願意投入的流程，才是實際存在的流程
-
-</v-click>
----
-routeAlias: half-finished-product-crisis
-layout: center
----
-
-# 半成品危機
-
----
-layout: center
----
-
-# 半成品危機 - 1
-
-- 以工廠來說，原料進廠直到送達客戶手中之前，任何步驟後的產物都只算是半成品
-
-<v-click>
-
-- 半成品如果無法出廠，就會造成隱性損失
-  - 倉儲成本
-  - 人工成本
-  - 時間成本
-
-</v-click>
-
----
-layout: center
----
-
-# 半成品危機 - 2
-
-- 軟體開發也是一樣
-  - 需求進入開發後，直到交付給使用者之前，都是半成品
-  - 就算已經開發完成，未經測試、未經部署，一樣還是半成品
-
-<v-click>
-
-- 無法完成交付，也會造成隱性損失
-  - 倉儲成本
-  - 人工成本
-  - 時間成本
-
-</v-click>
----
-layout: center
----
-
-# 半成品危機 - 3
-
-- 以工廠為例，半成品在廠內的停留時間越久...
-  - 代表佔用資源越久
-  - 交期拉長等於生產力變低
-
-<v-click>
-
-- 目標是提高系統生產力，而非提高任務完成的數量
-
-</v-click>
-
-<v-click>
-
-- 解決半成品卡死產線的方法
-  - 停止進料
-  - 停止發布新訂單
-
-</v-click>
-
----
-layout: center
----
-
-# 半成品危機 - 4
-
-- 以軟體開發來說，便是需要有效的控管需求進入開發的數量
-  - 防止非必要的需求進入開發
-  - 將需求排入開發
-  - 前者比後者更為重要
-
----
-routeAlias: four-types-of-work
-layout: center
----
-
-# 四種工作類型
-- 外部需求
-- 內部需求
-- 變更
-- 計劃外的工作
-
----
-layout: two-cols-header
---- 
-
-# 對軟體開發而言
-
-::left::
-
-<v-clicks>
-
-## 外部需求
-- 產品新功能開發
-- 產品功能改良、改版
-
-## 內部需求
-- 公司內部用工具
-- 團隊內部用工具
-
-</v-clicks>
-
-::right::
-
-<v-clicks>
-
-## 變更
-- 發 Pull Request
-- 解決衝突
-- Migration
-
-## 計劃外的工作 = 反工作
-- Hotfix
-- 隕石
-
-</v-clicks>
-
-<style>
-.two-cols-header {
-  grid-template-rows: none !important;
-}
-</style>
-
----
-layout: center
----
-
-# 目前手上有什麼工作分類？
-- 了解每類工作占用時間的比例
-- 明確意識到計劃外工作的存在
-- 四種工作類型的資源分配比重
-
----
-routeAlias: constraint-point-theory
-layout: center
----
-
-# 約束點理論
-
----
-layout: center
----
-
-# 約束點理論 - 1
-- 約束點、瓶頸往往決定該單位整體能產出的量
-- 以工廠為例，人員、原物料、機器都可以是約束點
-- 以化學來說，約束點理論就是速率控制步驟 (rate-determining step)
-
----
-layout: center
----
-
-# 約束點理論 - 2
-- 超級工程師的喜與悲
-  - 喜：什麼問題他都可以輕鬆解決
-  - 悲：所有問題只能靠他才能解決
-
-<v-click>
-
-- 約束點往往決定單位整體能產出的量
-
-</v-click>
-
-<v-click>
-
-- 在約束點之外所做的任何改良都只是裝忙
-
-</v-click>
-
----
-layout: center
----
-
-# 約束點理論 - 3
-- 藉由約束點理論提升產能
-  - 找出約束點
-  - 保護約束點
-  - 配合約束點
-  - 解放約束點
-  - 尋找新的約束點
-
----
-routeAlias: wait-time-vs-utilization
-layout: center
----
-
-# 需求等待時間
-- 若所有需求的優先度都相同
-- 等待時間 = 開發人員忙碌百分比 / 開發人員閒置百分比
-
-<v-click>
-
-<img src="/20250327/wait-time-vs-utilization.png" class="m-10 h-60" />
-
-</v-click>
-
-
-
-
----
-routeAlias: three-step-work-method
-layout: center
----
-
-# 三步工作法
-
----
-layout: center
----
-
-# 第一步 - 系統思維
-
-<img src="/20250327/first-way2.png.webp" class="m-10 h-40" />
-
-  - 建立穩定且能安全變更的工作流程
-  - 限制半成品數量
-  - 移除非必要需求
-  - 縮小開發規模與開發時間來持續產出
-
----
-layout: center
----
-
-# 第二步 - 放大回饋
-
-<img src="/20250327/second-way1.png.webp" class="m-10 h-40" />
-
-  - 將交付後的回饋有效的帶回開發源頭
-    - 再次從源頭控管品質
-    - 持續跟進業務目標，排除非必要需求
-  - 設法減少、根除計劃外工作
-  - 改進日常重複性工作
-
----
-layout: center
----
-
-# 第三步 - 持續學習與實驗的文化
-
-<div class="flex items-center justify-center h-full gap-4 mt-4">
-
-  <img src="/20250327/third-way.png.webp" class="m-10 h-40" />
-
-</div>
-
-  - 創造高度信任、樂於嘗試、分享的風氣
-  - 減少低度信任、盲從與恐懼的風氣
-  - 增加時間用於 IT 內部需求開發、改進
-  - 形成更有韌性的開發流程
-
+# 鳳凰專案的慘況
+### Maxine 報到後發現...
+- 申請開發環境、取得專案需要數 n 張工單，流程走一半還會被關單
+- 兩個禮拜還無法啟動 local 環境
+- 程式碼耦合性極高，改一行壞全身
+- Build 專案就需要數小時，而且難以成功
+- 測試環境與生產環境不一致，經測試過的版本上線後絕對會有問題
 
 ---
 layout: image-right
-
-# the image source
-image: /20250327/the-unicorn-project.png
+image: /20251127/Redstarbird.webp
 backgroundSize: 50%
----
+--- 
 
-# 獨角獸專案
-- 鳳凰專案姊妹作
-- 風凰專案同一時間，開發部工程師的故事...
+# 反抗軍
+- 一群想改變現狀的工程師
+- 試圖繞過官僚體制
+- 建立自動化建置、重構架構
+- 目標：讓開發變得更容易、更快速
 
 ---
 layout: center
 ---
 
-# 題外話
-- 有興趣入手的話，這系列不要買電子書
-- 固定版面 epub，排版不能放大縮小
-- 字小眼睛痛
+# 埃瑞克提出的五大理念
+- <Link to="ideal-1" title="局部性與簡單性"/>
+- <Link to="ideal-2" title="專注、流暢與快樂"/>
+- <Link to="ideal-3" title="日常工作的改善"/>
+- <Link to="ideal-4" title="心理安全感"/>
+- <Link to="ideal-5" title="以客戶為中心"/>
 
-<div class="flex items-center justify-center h-full gap-4 mt-4">
+---
+routeAlias: ideal-1
+layout: center
+---
 
-  <img src="/20250327/screenshot_2025_03_26T01_41_23+0800.png" class="h-80" />
-  <img src="/20250327/screenshot_2025_03_26T01_41_31+0800.png" class="h-80" />
+# 區域性和簡潔性
+## Locality and Simplicity
 
-</div>
+---
+layout: center
+---
+
+<v-clicks>
+
+- 複雜度是開發者的敵人
+- 要達成區域性和簡潔性，解耦是關鍵
+- 好的架構應該讓團隊能獨立運作
+- 不需要為了改一個小功能而與其他十個團隊協調
+
+</v-clicks>
+<!-- 程式碼、流程、組織中都適用，也可以衍生成康威定律 -->
+
+---
+routeAlias: ideal-2
+layout: center
+---
+
+# 專注、流暢與快樂
+## Focus, Flow, and Joy
+
+---
+layout: center
+---
+
+<v-clicks>
+
+- 開發者在「心流」(Flow) 狀態下效率最高
+- 等待（建置、工單、審核）會打斷心流
+- 目標是減少等待時間，讓開發者專注於解決問題
+- 開發應該是快樂的，而不是充滿挫折
+
+</v-clicks>
+
+---
+routeAlias: ideal-3
+layout: center
+---
+
+# 持續改善日常工作
+## Improvement of Daily Work
+
+---
+layout: image-right
+image: /20251127/Andon_Otomasyon_Panosu2.jpg
+backgroundSize: 50%
+---
+
+# 豐田安燈系統
+
+- 賦予生產線的員工權力，發現異常可以立即停下生產線
+- 每次停下生產線時，都需要進行記錄、找出問題並解決
+
+---
+layout: center
+---
+
+<v-clicks>
+
+- 不要只顧著趕新功能
+- 必須持續償還技術債
+- 改善開發流程本身就是工作的一部分
+- 兩者都會受到時間複利的影響
+
+</v-clicks>
+<!-- 技術債和改善開發流程的複利效益 -->
+
+---
+routeAlias: ideal-4
+layout: center
+---
+
+# 心理上的安全感
+## Psychological Safety
+
+---
+layout: center
+---
+
+<v-clicks>
+
+- 提升生產線效率的方法之一，就是讓員工有生理上的安全感
+- 生理安全被滿足，有助於工作上的專注度與流暢度
+- 進一步的則是心理上的安全感
+
+</v-clicks>
+---
+layout: center
+---
+
+<v-clicks>
+
+- 鼓勵誠實的溝通，而不是掩蓋問題
+- 發生事故時，進行「不指責的事後檢討」
+- 創新需要冒險，冒險需要安全感
+- Google 研究指出，心理安全感是高效團隊的首要特徵
+
+</v-clicks>
+
+---
+routeAlias: ideal-5
+layout: center
+---
+
+# 以顧客為中心
+## Customer Focus
+
+---
+layout: center
+---
+
+<v-clicks>
+
+- 開發者應該知道自己在為誰開發
+- 理解業務目標與客戶痛點
+- 避免「功能工廠」模式
+- 真正解決使用者的問題，而不只是交付程式碼
+
+</v-clicks>
+
+<!-- 如果你從來不知道你開發的東西有何回饋，你要如何創造有價值的東西？ 如果這功能不會讓客戶掏錢，那麼這個功能就是沒有價值的。 -->
+
+---
+layout: center
+---
+
+# 五大理念
+- <Link to="ideal-1" title="局部性與簡單性"/>
+- <Link to="ideal-2" title="專注、流暢與快樂"/>
+- <Link to="ideal-3" title="日常工作的改善"/>
+- <Link to="ideal-4" title="心理安全感"/>
+- <Link to="ideal-5" title="以客戶為中心"/>
+
+
+---
+layout: center
+---
+
+### 當 Maxine 成功領導團隊取得初步成功
+### 想在公司內部推行其他新專案時
+### 遇到了阻礙...
+
+---
+layout: center
+---
+
+# 創新與維運的平衡
+
+---
+layout: center
+---
+
+# Geoffrey Moore 的框架
+
+- <Link to="three-aspect-theories" title="三層面理論"/>
+- <Link to="core-vs-context" title="核心業務與脈絡業務"/>
+
+---
+layout: center
+---
+
+# 三層面理論
+## Three aspect theories
+
+---
+routeAlias: three-aspect-theories
+layout: center
+---
+
+# 三層面理論
+<v-clicks>
+
+- **第一層 - 核心業務**
+  - 成熟的產品或服務，是公司主要的獲利來源
+  - 顧客、商業模式和營運模式都是已知、可預期的
+  - 重點：效率、穩定性、最大化利潤
+
+- **第二層 - 新興業務**
+  - 快速成長的業務，未來可能成為第一層
+  - 重點：推廣第一層、獲取市佔率
+
+- **第三層 - 構思原型**
+  - 創新實驗、早期的點子
+  - 具有成為第二層的潛力
+  - 重點：快速學習、快速驗證假設、抉擇是否存續
+</v-clicks>
+<!-- 隨著時間推移，H3 可能變成 H2，H2 變成 H1，H1 最終會衰退。 -->
+
+---
+layout: center
+---
+
+# 核心業務與脈絡業務
+## Core vs Context
+
+---
+routeAlias: core-vs-context
+layout: center
+---
+
+# 核心業務與脈絡業務
+
+<v-clicks>
+
+- **核心業務**
+  - 企業的差異化優勢，客戶願意為此付錢的原因
+  - 重點：**創新、差異化**
+  
+- **脈絡業務**
+  - 為了支援核心業務運作而必須做的所有其他事情
+  - 雖然必要，但客戶不會因為這些做得好而多付錢（但不做會扣分）
+  - 重點：**標準化、自動化、外包** (目的是釋放資源給 Core)
+
+</v-clicks>
+<!-- 
+所有的創新最終都會變成脈絡。
+例如：電子郵件系統在 90 年代可能是核心優勢，現在只是脈絡（沒人會因為你的 Email 系統好而買你的產品，但如果 Email 壞了公司就停擺）。
+-->
+
+---
+layout: center
+---
+
+# 鳳凰專案 vs 獨角獸專案
+- **鳳凰專案**：從 IT 管理與維運 (Ops) 角度
+  - 強調四種工作類型
+  - 三步工作法
+- **獨角獸專案**：從 開發者 (Dev) 角度
+  - 強調五大理念
+  - 三層面理論
 
 ---
 layout: center
@@ -434,4 +337,3 @@ layout: center
   <h1>The end</h1>
   <PoweredBySlidev />
 </div>
-
